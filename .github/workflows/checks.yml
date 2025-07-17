@@ -54,7 +54,7 @@ jobs:
       # uv를 사용하여 의존성 패키지들을 설치합니다.
       - name: Install dependencies using uv
         run: |
-          uv sync --dev-packages
+          uv sync --dev
 
       # ruff로 import 정렬 및 코드 스타일 검사
       - name: Run ruff (Code quality check)
