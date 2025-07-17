@@ -1,0 +1,49 @@
+[project]
+name = "fastapiproject"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "aerich>=0.9.1",
+    "asyncpg>=0.30.0",
+    "black>=25.1.0",
+    "fastapi>=0.116.1",
+    "flake8>=7.3.0",
+    "httpx>=0.28.1",
+    "isort>=6.0.1",
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.1.0",
+    "python-dotenv>=1.1.1",
+    "tortoise-orm>=0.25.1",
+    "uvicorn>=0.35.0",
+    "ruff>=0.0.280",  # <-- ruff 추가
+]
+prod = [
+    "aerich>=0.9.1",
+    "asyncpg>=0.30.0",
+    "fastapi>=0.116.1",
+    "python-dotenv>=1.1.1",
+    "tortoise-orm>=0.25.1",
+    "uvicorn>=0.35.0",
+]
+
+[tool.aerich]
+tortoise_orm = "tortoise_config.TORTOISE_ORM"
+location = "./migrations"
+src_folder = "./."
+
+[tool.ruff]
+line-length = 88
+select = ["I", "E", "F", "W"]  # I: import, E: error, F: formatting, W: warning
+fix = true                    # 자동 수정 허용
+
+[tool.ruff.isort]
+profile = "black"             # black 스타일과 호환
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+use_parentheses = true
