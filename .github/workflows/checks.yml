@@ -77,11 +77,12 @@ jobs:
       # .env 환경 구성
       - name: Set environment variables
         run: |
-          echo "DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB" >> $GITHUB_ENV
+          echo "DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@POSTGRES_PORT/$POSTGRES_DB" >> $GITHUB_ENV
         env:
           POSTGRES_USER: ${{ secrets.DB_USER }}
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
           POSTGRES_DB: ${{ secrets.DB_NAME }}
+          POSTGRES_PORT: ${{ secrets.DB_PORT }}
 
       # 정상적인 db 연결을 확인했으니 마이그레이션 수행
       - name: Run aerich migrations
