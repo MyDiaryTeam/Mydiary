@@ -38,8 +38,10 @@ src_folder = "./."
 
 [tool.ruff]
 line-length = 88
-select = ["I", "E", "F", "W"]
 fix = true
+
+[tool.ruff.lint]
+select = ["I", "E", "F", "W"]
 
 [tool.isort]
 profile = "black"
