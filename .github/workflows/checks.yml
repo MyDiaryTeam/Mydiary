@@ -18,7 +18,7 @@ jobs:
     # services 키워드를 사용하여 PostgreSQL 서비스를 설정
     services:
       db:
-        image: postgres:15
+        image: postgres:17
         ports:
           - 5432:5432
         # Github Secrets에서 가져와서 env로 등록, PostgreSQL 데이터베이스 연결 설정
