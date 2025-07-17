@@ -197,8 +197,8 @@ __all__ = ["User"] # import 할 클래스 빼줘야함 항상.
 3. 프로젝트 루트 디렉터리에 `.github` 폴더를 생성하고 하위에 `workflows/checks.yml` 파일을 생성한다.
    
 ## 1. **[project.optional-dependencies.dev]** 에 Code Qulity Checking 을 위한 라이브러리를 설치한다.
- - [ ]  **`black`** : PEP8 코드 포매터
- - [ ]  **`ruff`** : import 정렬 순서 코드 포매터
+ -  **`black`** : PEP8 코드 포매터
+ -  **`ruff`** : import 정렬 순서 코드 포매터
     
 ## 2. 민감한 정보를 코드에 노출시키지 않기 위해 Git Actions에서 환경변수를 저장한다.
 Github Repository의 Settings → Secrets and Variables → Action → New repository secret
@@ -207,109 +207,108 @@ Github Repository의 Settings → Secrets and Variables → Action → New repos
     
 ## 3. 프로젝트 루트 디렉터리에 `.github` 폴더를 생성하고 하위에 `workflows/checks.yml` 파일을 생성한다.
     
-    `checks.yml` 파일에 CI를 위한 스크립트를 아래의 요구사항을 만족하도록 작성한다.
-    
-    - [ ]  브랜치에 PUSH할 때 작동되도록 설정
-    - [ ]  `Postgresql` 서비스 생성 및 연결 테스트
-    - [ ]  `uv` 설치 및 의존성 패키지 및 라이브러리 설치
-    - [ ]  `ruff`, `black`  코드 스타일 및 정적 타입 검사 테스트 추가
-    - [ ]  `pytest` 코드 실행 추가 (2단계 도전 미션 관련)
-    - 스크립트 예시
-        
-        ```yaml
-        # .github/workflows/checks.yml
-        
-        name: Code Quality Checks
-        
-        # 트리거 이벤트 부분
-        # 코드가 푸시되거나 풀 리퀘스트가 생성될 때 CI가 실행됩니다.
-        on:
-          push:
-            branches:
-              - main
-          pull_request:
-        
-        jobs:
-          ci:
-            # 가장 최신버전의 ubuntu를 OS 환경으로 설정합니다.
-            runs-on: ubuntu-latest
-        
-            # services 키워드를 사용하여 PostgreSQL 서비스를 설정
-            services:
-              db:
-                image: postgres:15
-                ports:
-                  - 5432:5432
-                # Github Secrets에서 가져와서 env로 등록, PostgreSQL 데이터베이스 연결 설정
-                env:
-                  POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-                  POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-                  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-                # 옵션으로 PostgreSQL의 연결 상태를 확인. 10초 단위로 5번 재시도. 5초간 기다림.
-                options: >-
-                  --health-cmd pg_isready
-                  --health-interval 10s
-                  --health-timeout 5s
-                  --health-retries 5
-        
-            steps:
-              # CI 환경에서 코드를 체크아웃합니다.
-              - name: Checkout code
-                uses: actions/checkout@v3
-        
-              # CI 환경에서 사용할 파이썬 버전을 지정합니다.
-              - name: Set up Python
-                uses: actions/setup-python@v4
-                with:
-                  python-version: '3.12'
-        
-              # uv를 설치합니다.
-              - name: Install uv
-                run: |
-                  curl -LsSf https://astral.sh/uv/install.sh | sh
-                  echo "$HOME/.local/bin" >> $GITHUB_PATH
-                  echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-        
-              # uv를 사용하여 의존성 패키지들을 설치합니다.
-              - name: Install dependencies using uv
-                run: |
-                  uv sync --dev-packages
-        
-              # ruff로 import 정렬 및 코드 스타일 검사
-              - name: Run ruff (Code quality check)
-                run: |
-                  uv run ruff check . 
-        
-              # black을 사용하여 PEP8 코드스타일을 준수했는지 체크합니다.
-              - name: Run black (Code formatting)
-                run: |
-                  uv run black . --check
-        
-              # db 연결을 테스트
-              - name: Wait for PostgreSQL
-                run: |
-                  until pg_isready -h localhost -p 5432 -U "${{ secrets.POSTGRES_USER }}"; do
-                    echo "Waiting for PostgreSQL..."
-                    sleep 2
-                  done
-        
-              # .env 환경 구성
-              - name: Set environment variables
-                run: |
-                  echo "DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB" >> $GITHUB_ENV
-                env:
-                  POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-                  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-                  POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        
-              # 정상적인 db 연결을 확인했으니 마이그레이션 수행 
-              - name: Run aerich migrations
-                run: |
-                  uv run aerich upgrade
-        
-              # 도전 미션
-              # FastAPI에서 pytest로 테스트를 실행합니다.
-              - name: Run tests with pytest
-                run: |
-                  uv run pytest
-        ```
+`checks.yml` 파일에 CI를 위한 스크립트를 아래의 요구사항을 만족하도록 작성한다.
+
+- [1]  브랜치에 PUSH할 때 작동되도록 설정
+- [2]  `Postgresql` 서비스 생성 및 연결 테스트
+- [3]  `uv` 설치 및 의존성 패키지 및 라이브러리 설치
+- [4]  `ruff`, `black`  코드 스타일 및 정적 타입 검사 테스트 추가
+- [5]  `pytest` 코드 실행 추가 (2단계 도전 미션 관련)
+- 스크립트 예시
+```yaml
+# .github/workflows/checks.yml
+
+name: Code Quality Checks
+
+# 트리거 이벤트 부분
+# 코드가 푸시되거나 풀 리퀘스트가 생성될 때 CI가 실행됩니다.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  ci:
+    # 가장 최신버전의 ubuntu를 OS 환경으로 설정합니다.
+    runs-on: ubuntu-latest
+
+    # services 키워드를 사용하여 PostgreSQL 서비스를 설정
+    services:
+      db:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        # Github Secrets에서 가져와서 env로 등록, PostgreSQL 데이터베이스 연결 설정
+        env:
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        # 옵션으로 PostgreSQL의 연결 상태를 확인. 10초 단위로 5번 재시도. 5초간 기다림.
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      # CI 환경에서 코드를 체크아웃합니다.
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # CI 환경에서 사용할 파이썬 버전을 지정합니다.
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      # uv를 설치합니다.
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      # uv를 사용하여 의존성 패키지들을 설치합니다.
+      - name: Install dependencies using uv
+        run: |
+          uv sync --dev-packages
+
+      # ruff로 import 정렬 및 코드 스타일 검사
+      - name: Run ruff (Code quality check)
+        run: |
+          uv run ruff check . 
+
+      # black을 사용하여 PEP8 코드스타일을 준수했는지 체크합니다.
+      - name: Run black (Code formatting)
+        run: |
+          uv run black . --check
+
+      # db 연결을 테스트
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5432 -U "${{ secrets.POSTGRES_USER }}"; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+
+      # .env 환경 구성
+      - name: Set environment variables
+        run: |
+          echo "DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB" >> $GITHUB_ENV
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+
+      # 정상적인 db 연결을 확인했으니 마이그레이션 수행 
+      - name: Run aerich migrations
+        run: |
+          uv run aerich upgrade
+
+      # 도전 미션
+      # FastAPI에서 pytest로 테스트를 실행합니다.
+      - name: Run tests with pytest
+        run: |
+          uv run pytest
+```
