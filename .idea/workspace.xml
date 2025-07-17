@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="434e5ea7-0a51-49b0-9943-b6dd5edb56f3" name="변경" comment="################&#10;# 🚚 : &lt;Continious Intergration, CI&gt; &#10;&#10;&#10;&#10;#######본문#######&#10;파이팅하시고&#10;&#10;################&#10;&#10;&#10;&#10;&#10;&#10;## 🧵 Commit Convention :: [Gitmoji](https://gitmoji.dev/)&#10;&#10;---&#10;&#10;**Commit Title Type**&#10;&#10;- ✨ feat : 새로운 기능 추가&#10;- 🐛 fix : 기능 수정, 버그 수정&#10;- 💡 chore : 오타 수정 및 새로운 기능이 추가되지 않고, 코드가 변경 된 경우 (주석 추가 및 수정 포함)&#10;- 📝 docs : 문서 수정 (readme 수정 시)&#10;- 🚚 build : 빌드 관련 파일 수정 및 삭제한 경우&#10;- ✅ test : 테스트 코드, 리팩터링 테스트 코드 추가(프로덕션 코드 변경 X)&#10;- ♻️ refactor : 코드 리팩터링&#10;- 🚑 hotfix : 긴급 수정" />
+    <list default="true" id="434e5ea7-0a51-49b0-9943-b6dd5edb56f3" name="변경" comment="################&#10;# 🚚 : &lt;Continious Intergration, CI&gt; &#10;&#10;&#10;&#10;#######본문#######&#10;파이팅하시고&#10;&#10;################&#10;&#10;&#10;&#10;&#10;&#10;## 🧵 Commit Convention :: [Gitmoji](https://gitmoji.dev/)&#10;&#10;---&#10;&#10;**Commit Title Type**&#10;&#10;- ✨ feat : 새로운 기능 추가&#10;- 🐛 fix : 기능 수정, 버그 수정&#10;- 💡 chore : 오타 수정 및 새로운 기능이 추가되지 않고, 코드가 변경 된 경우 (주석 추가 및 수정 포함)&#10;- 📝 docs : 문서 수정 (readme 수정 시)&#10;- 🚚 build : 빌드 관련 파일 수정 및 삭제한 경우&#10;- ✅ test : 테스트 코드, 리팩터링 테스트 코드 추가(프로덕션 코드 변경 X)&#10;- ♻️ refactor : 코드 리팩터링&#10;- 🚑 hotfix : 긴급 수정">
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

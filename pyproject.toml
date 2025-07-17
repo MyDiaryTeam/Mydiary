@@ -20,7 +20,7 @@ dev = [
     "python-dotenv>=1.1.1",
     "tortoise-orm>=0.25.1",
     "uvicorn>=0.35.0",
-    "ruff>=0.0.280",  # <-- ruff 추가
+    "ruff>=0.0.280",
 ]
 prod = [
     "aerich>=0.9.1",
@@ -42,7 +42,6 @@ select = ["I", "E", "F", "W"]  # I: import, E: error, F: formatting, W: warning
 fix = true                    # 자동 수정 허용
 
 [tool.ruff.isort]
-profile = "black"             # black 스타일과 호환
 line_length = 88
 multi_line_output = 3
 include_trailing_comma = true
