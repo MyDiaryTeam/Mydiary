@@ -69,7 +69,7 @@ jobs:
       # db 연결을 테스트
       - name: Wait for PostgreSQL
         run: |
-          until pg_isready -h localhost -p 5432 -U "${{ secrets.POSTGRES_USER }}"; do
+          until pg_isready -h localhost -p 5432 -U "${{ secrets.DB_USER }}"; do
             echo "Waiting for PostgreSQL..."
             sleep 2
           done
@@ -79,9 +79,9 @@ jobs:
         run: |
           echo "DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB" >> $GITHUB_ENV
         env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
 
       # 정상적인 db 연결을 확인했으니 마이그레이션 수행
       - name: Run aerich migrations
