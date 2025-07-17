@@ -38,11 +38,8 @@ src_folder = "./."
 
 [tool.ruff]
 line-length = 88
-select = ["I", "E", "F", "W"]  # I: import, E: error, F: formatting, W: warning
-fix = true                    # 자동 수정 허용
+select = ["I", "E", "F", "W"]
+fix = true
 
 [tool.ruff.isort]
-line_length = 88
-multi_line_output = 3
-include_trailing_comma = true
-use_parentheses = true
+profile = "black"
