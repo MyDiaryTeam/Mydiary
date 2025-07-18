@@ -16,7 +16,9 @@ class Diary(models.Model):
     )
     title = fields.CharField(max_length=255, description="제목")
     content = fields.TextField(description="내용")
-    emotion_summary = fields.JSONField(null=True, description="감정 요약 (AI 분석 결과)")
+    emotion_summary = fields.JSONField(
+        null=True, description="감정 요약 (AI 분석 결과)"
+    )
     mood = fields.CharEnumField(Mood, description="기분")
     created_at = fields.DatetimeField(auto_now_add=True, description="작성일자")
     updated_at = fields.DatetimeField(auto_now=True, description="수정일자")
