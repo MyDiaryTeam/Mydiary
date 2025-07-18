@@ -406,3 +406,44 @@ Step 1: API 스펙 설계
 Step 2: 유저 API 구현
 Step 3: 일기 API 구현
 Step 4: Test Code 작성
+
+## STEP 3: 일기 API 구현
+MDR (Model, DTO, Router)
+1. Model # Already done
+2. DTO (Pydantic)
+
+Pydantic: 직렬화/ 역질렬화를 자동화 하기 위함.
+ - Validation
+``` Valiation
+from pydantic import BaseModel
+
+class User(BaseModel):
+    name: str
+    age: int
+```
+
+ - Type Casting
+``` Type Casting
+user = User(name="Alice", age="25")
+print(user.age)  # 25 (int로 자동 변환)
+```
+
+ - Serialization / Deserialization
+```Serialization / Deserialization
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class User(BaseModel):
+    name: str
+    age: int
+
+@app.post("/users")
+def create_user(user: User):
+    return user  # JSON 자동 변환
+```
+ - IDE, Type Hinting
+ - 무결성 확보
+
+3. Router

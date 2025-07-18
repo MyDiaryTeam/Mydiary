@@ -1,7 +1,8 @@
 from contextlib import asynccontextmanager
 
-from app.config.database import init_db
 from fastapi import FastAPI
+
+from app.config.database import init_db
 
 
 # @app.on_event("startup") # 오래된 방식 > New Way: lifespan
