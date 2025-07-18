@@ -4,35 +4,14 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = ["tomlkit>=0.13.3"]
 
 [dependency-groups]
-dev = [
-    "aerich>=0.9.1",
-    "asyncpg>=0.30.0",
-    "black>=25.1.0",
-    "fastapi>=0.116.1",
-    "flake8>=7.3.0",
-    "httpx>=0.28.1",
-    "isort>=6.0.1",
-    "pytest>=8.4.1",
-    "pytest-asyncio>=1.1.0",
-    "python-dotenv>=1.1.1",
-    "tortoise-orm>=0.25.1",
-    "uvicorn>=0.35.0",
-    "ruff>=0.0.280",
-]
-prod = [
-    "aerich>=0.9.1",
-    "asyncpg>=0.30.0",
-    "fastapi>=0.116.1",
-    "python-dotenv>=1.1.1",
-    "tortoise-orm>=0.25.1",
-    "uvicorn>=0.35.0",
-]
+dev = ["aerich>=0.9.1", "asyncpg>=0.30.0", "black>=25.1.0", "fastapi>=0.116.1", "flake8>=7.3.0", "httpx>=0.28.1", "isort>=6.0.1", "pytest>=8.4.1", "pytest-asyncio>=1.1.0", "python-dotenv>=1.1.1", "tortoise-orm>=0.25.1", "uvicorn>=0.35.0", "ruff>=0.0.280"]
+prod = ["aerich>=0.9.1", "asyncpg>=0.30.0", "fastapi>=0.116.1", "python-dotenv>=1.1.1", "tortoise-orm>=0.25.1", "uvicorn>=0.35.0"]
 
 [tool.aerich]
-tortoise_orm = "tortoise_config.TORTOISE_ORM"
+tortoise_orm = "app.config.tortoise_config.TORTOISE_ORM"
 location = "./migrations"
 src_folder = "./."
 

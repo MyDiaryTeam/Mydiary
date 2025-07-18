@@ -312,3 +312,97 @@ jobs:
         run: |
           uv run pytest
 ```
+
+# Model 생성하기
+Step 1: 모델 정의하기
+Step 2: tortoise_config.py 
+Step 3: Aerich
+
+## Step 1: 모델 정의하기
+ERD
+`https://www.mermaidchart.com/app/projects
+/3a33ee98-654f-41f6-a2c7-a04e5f2494e9
+/diagrams/1a5d8e4e-f696-4e4b-a979-afa4af308137/version/v0.1/edit`
+
+users.py
+```
+from tortoise import fields, models
+from datetime import datetime
+
+
+class User(models.Model):
+    user_id = fields.IntField(pk=True, description="사용자 고유 식별자")
+    email = fields.CharField(max_length=255, unique=True, description="사용자 이메일 (로그인 ID)")
+    name = fields.CharField(max_length=100, description="사용자 이름")
+    nickname = fields.CharField(max_length=100, unique=True, description="사용자 닉네임")
+    phone_number = fields.CharField(max_length=15, description="휴대폰 번호")
+    password_hash = fields.CharField(max_length=255, description="해시된 비밀번호")
+    account_status = fields.CharEnumField(enum_type=["active", "inactive"], description="계정 활성화 상태")
+    account_type = fields.CharEnumField(enum_type=["admin", "general"], description="계정 유형")
+    created_at = fields.DatetimeField(auto_now_add=True, description="계정 생성 시간")
+    updated_at = fields.DatetimeField(auto_now=True, description="계정 마지막 업데이트 시간")
+
+    class Meta:
+        table = "users"
+```
+
+### Exception 1: Enum
+Tortoise ORM Should use "Python Enum Class" at EnumField 
+
+❌ 리스트로 정의 → Tortoise가 타입을 해석 못함
+```
+account_status = fields.CharEnumField(["active", "inactive"], max_length=10)
+```
+
+✅ 올바른 예시
+```
+from enum import Enum
+from tortoise import fields, models
+
+class AccountStatus(str, Enum):     # PythonEnumClass로 EnumField를 우선 정의
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+
+class User(models.Model):           # 정의한 EnumField를 넣기 "AccountStatus"
+    id = fields.IntField(pk=True)
+    account_status = fields.CharEnumField(AccountStatus, max_length=10)
+```
+
+### Exception 2: Use UserModel Library
+써야 하는데....
+
+## Step 2: TORTOISE_ORM 
+```angular2html
+TORTOISE_ORM = {
+    "connections": {"default": "postgres://user:password@localhost:5432/mydb"},
+    "apps": {
+        "models": {
+            "models": [
+                "app.models.user",              # ✅ User 모델
+                "app.models.account",           # ✅ Account 모델
+                "aerich.models"                 # ✅ 반드시 추가 (마이그레이션 관리용)
+            ],
+            "default_connection": "default",
+        }
+    },
+}
+```
+
+## Step3: Aerich
+- `aerich migrate`
+- `aerich upgrade`
+
+### Exception 1: PREVILEGES
+```angular2html
+슈퍼유저로 접속 후
+GRANT ALL PRIVILEGES ON DATABASE mydiary TO myuser;
+GRANT USAGE ON SCHEMA public TO myuser;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO myuser;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO myuser;
+```
+
+# API 구현
+Step 1: API 스펙 설계
+Step 2: 유저 API 구현
+Step 3: 일기 API 구현
+Step 4: Test Code 작성
