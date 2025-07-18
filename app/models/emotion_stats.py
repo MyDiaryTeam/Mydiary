@@ -18,4 +18,9 @@ class EmotionStat(models.Model):
 
     class Meta:
         table = "emotion_stats"
-        unique_together = ("user_email", "time_period_type", "time_period_value", "emotion_type")
+        unique_together = (
+            "user_email",
+            "time_period_type",
+            "time_period_value",
+            "emotion_type",
+        )
