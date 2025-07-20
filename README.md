@@ -447,3 +447,46 @@ def create_user(user: User):
  - 무결성 확보
 
 3. Router
+```angular2html
+
+```
+```including router
+
+```
+
+### Exception 1: SwaggerUI에 보이지 않음
+Code:
+Cause: Router을 새로 등록해서 서버를 재시작해야함. 8000 Port가 종료가 안됨.  
+Solution 1: 8000번 포트 종료
+Solution 2: 컴퓨터 재부팅
+
+### Exception 2: DB Connection 오류
+Code: `tortoise.exceptions.ConfigurationError: default_connection for the model <class 'app.models.diaries.DiaryModel'> cannot be None`
+Cause: User을 UserModel로 변경함. 이후, 모든 관련 스키마가 같이 바꾸지 않음.
+Solution 1: 다른 모델 및 라우터의 FK Key를 재확인
+
+### Exception 3: dto 입력 오류
+Code: ``
+Cause: Model의 스키마에서 꼭 채워야하는 값이 없을 때 오류가 생김
+Solution: 
+
+### Exception 4: 일기 생성 시 / 422 Unprocessable Entity
+Code: `POST /diaries/ HTTP/1.1" 422 Unprocessable Entity`
+Cause: 서버에서 받은 필드와 dto의 필드가 다름
+Solution 1: id는 AutoIncrement이므로 Create 기능엔 추가하지 않음
+Solution 2: user_email은 FK이므로 스트링이 아님.
+Solution 3: EnumField로 정의한 것은 class를 이용하여 따로 정의해줘야함.
+
+### Exception 5: 일기 생성 시 / 500 Internal Server Error
+Code: `"POST /diaries/ HTTP/1.1" 500 Internal Server Error`
+Cause 1: 라우터에 FK 값이 있는 콜럼, 참조 오류
+Solution 1: UserModel 불러오기, UserModel의 값을 클래스 인스턴스로 반환하여 사용
+
+Cause 2: Dict 값 참조 오류
+Solution 1: `return DiaryResponse.model_validate(diary.__dict__)`
+Solution 2: ` model_config = { "from_attributes": True, }`
+
+### Exception 6: 일기 하나 불러오기 / 존재하지 않는 필터명으로 불러오기
+Code: `Unknown filter param 'id'. Allowed base values are [...]`
+Cause: 존재하지 않는 필드가 있다는 것
+Solution: Router에서 잘 찾아보자

@@ -17,9 +17,8 @@ TORTOISE_ORM = {
                 "app.models.diaries",
                 "app.models.diary_tags",
                 "app.models.emotion_stats",
-                "app.models.alert_logs,",
+                "app.models.alert_logs",
                 "app.models.tags",
-                "app.models.diary",
             ],
             "default_connection": "default",
         }

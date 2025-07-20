@@ -1,3 +1,3 @@
-from .users import Users
+from .users import UserModel
 
-__all__ = ["Users"]  # import 할 클래스 빼줘야함 항상.
+__all__ = ["UserModel"]  # import 할 클래스 빼줘야함 항상.
