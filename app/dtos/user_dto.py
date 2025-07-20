@@ -10,7 +10,6 @@ class UserCreate(BaseModel):
     phone_number: str = Field(..., max_length=20, description="전화번호")
 
 
-
 class UserUpdate(BaseModel):
     nickname: str | None = Field(None, max_length=100, description="닉네임")
     name: str | None = Field(None, max_length=100, description="이름")
@@ -32,9 +31,11 @@ class UserResponse(BaseModel):
         "from_attributes": True,
     }
 
-class Login(BaseModel):
-    email: EmailStr = Field(..., max_length=255, description="이메일")
-    password: str = Field(..., max_length=255, description="패스워드")
 
-class Logout(BaseModel):
-    id: int = Field(..., description="ID")
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class UserInDB(UserResponse):
+    password: str

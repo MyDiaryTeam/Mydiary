@@ -9,11 +9,44 @@ dependencies = [
     "email-validator>=2.2.0",
     "pydantic>=2.11.7",
     "tomlkit>=0.13.3",
+    "pydantic-settings",
+    "python-jose[cryptography]",
 ]
 
 [dependency-groups]
-dev = ["aerich>=0.9.1", "asyncpg>=0.30.0", "black>=25.1.0", "fastapi>=0.116.1", "flake8>=7.3.0", "httpx>=0.28.1", "isort>=6.0.1", "pytest>=8.4.1", "pytest-asyncio>=1.1.0", "python-dotenv>=1.1.1", "tortoise-orm>=0.25.1", "uvicorn>=0.35.0", "ruff>=0.0.280", "passlib[bcrypt]>=1.7.4"]
-prod = ["aerich>=0.9.1", "asyncpg>=0.30.0", "fastapi>=0.116.1", "python-dotenv>=1.1.1", "tortoise-orm>=0.25.1", "uvicorn>=0.35.0", "passlib[bcrypt]>=1.7.4"]
+dev = [
+    "aerich>=0.9.1",
+    "asyncpg>=0.30.0",
+    "black>=25.1.0",
+    "fastapi>=0.116.1",
+    "flake8>=7.3.0",
+    "httpx>=0.28.1",
+    "isort>=6.0.1",
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.1.0",
+    "python-dotenv>=1.1.1",
+    "tortoise-orm>=0.25.1",
+    "uvicorn>=0.35.0",
+    "ruff>=0.0.280",
+    "passlib[bcrypt]==1.7.1",
+    "bcrypt==3.2.0",
+    "python-jose[cryptography]",
+    "pydantic-settings",
+    "python-multipart",
+]
+prod = [
+    "aerich>=0.9.1",
+    "asyncpg>=0.30.0",
+    "fastapi>=0.116.1",
+    "python-dotenv>=1.1.1",
+    "tortoise-orm>=0.25.1",
+    "uvicorn>=0.35.0",
+    "passlib[bcrypt]==1.7.1",
+    "bcrypt==3.2.0",
+    "python-jose[cryptography]",
+    "pydantic-settings",
+    "python-multipart",
+]
 
 [tool.aerich]
 tortoise_orm = "app.config.tortoise_config.TORTOISE_ORM"
