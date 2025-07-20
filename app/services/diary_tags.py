@@ -1,6 +1,35 @@
+from app.dtos.diary_tags import DiaryTagSchemas
 from app.models.diary_tags import DiaryTag
 
-
 class DiaryTagService:
-        async def get_tags_diary(self, diary_id: int) -> list:
-            pass
+    async def add_tag_to_diary(self, diary_id: int, tag_id: int) -> DiaryTagSchemas.MessageResponse:
+        diary = await DiaryTag.diary.get_or_none(id=diary_id)
+        tag = await DiaryTag.tag.get_or_none(id=tag_id)
+
+        if not diary or not tag:
+            raise Exception("Diary or Tag not found")
+
+
+        await diary.tags.add(tag)
+
+        return DiaryTagSchemas.MessageResponse(message="Tag added to diary")
+
+    async def remove_tag_from_diary(self, diary_id: int, tag_id: int) -> DiaryTagSchemas.MessageResponse:
+        diary = await DiaryTag.diary.get_or_none(id=diary_id)
+        tag = await DiaryTag.tag.get_or_none(id=tag_id)
+
+        if not diary or not tag:
+            raise Exception("Diary or Tag not found")
+
+        await diary.tags.remove(tag)
+
+        return DiaryTagSchemas.MessageResponse(message="Tag removed from diary")
+
+    async def get_tags_of_diary(self, diary_id: int) -> list[DiaryTagSchemas.TagResponse]:
+        diary = await DiaryTag.diary.get_or_none(id=diary_id).prefetch_related("tags")
+
+        if not diary:
+            raise Exception("Diary not found")
+
+        tags = await diary.tags.all()
+        return [DiaryTagSchemas.TagResponse(id=tag.id, name=tag.name) for tag in tags]
