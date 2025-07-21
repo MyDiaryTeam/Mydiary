@@ -46,15 +46,17 @@ async def get_diary(diary_id: int):
 @router.get("", response_model=list[DiaryResponse])  # List Update
 async def list_diaries(
     sort: str = Query("Latest", enum=["Oldest", "Latest"]),
-    tag: str | None = Query(None, description="Tag Name"),
+    tag: str | None = None,
 ):
-    # order가 Oldest이면 오래된 순, Latest이면 최신순
+    # order가 Oldest이면 오래된 순, Latest이면 최신순   \
     order_by_field = "-created_at" if sort == "Latest" else "created_at"
-    diaries = (
-        await DiaryModel.filter(diary_tags__tag__name=tag)
-        .order_by(order_by_field)
-        .prefetch_related("diary_tags__tag")
-    )
+    if tag:
+        diaries = (
+            await DiaryModel.filter(tags__name=tag).order_by(order_by_field).distinct()
+        )
+    else:
+        diaries = await DiaryModel.all().order_by(order_by_field)
+
     return [DiaryResponse.model_validate(diary) for diary in diaries]
 
 
