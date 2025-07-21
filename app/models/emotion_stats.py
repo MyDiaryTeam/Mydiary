@@ -1,16 +1,19 @@
-from tortoise import fields, models
 from enum import Enum
 
+from tortoise import fields, models
 
-class TimePeriodType(str, Enum):
+
+class TimePeriodTypeModel(str, Enum):
     DAILY = "daily"
     WEEKLY = "weekly"
     MONTHLY = "monthly"
 
 
-class EmotionStat(models.Model):
-    user_email = fields.ForeignKeyField("models.User", related_name="emotion_stats")
-    time_period_type = fields.CharEnumField(TimePeriodType)
+class EmotionStatModel(models.Model):
+    user_email = fields.ForeignKeyField(
+        "models.UserModel", related_name="emotion_stats"
+    )
+    time_period_type = fields.CharEnumField(TimePeriodTypeModel)
     time_period_value = fields.CharField(max_length=50)
     emotion_type = fields.CharField(max_length=50)
     frequency = fields.IntField()

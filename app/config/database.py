@@ -17,7 +17,7 @@ async def init_db():
     await Tortoise.init(
         # 환경변수로 관리하여 보안 강화
         db_url=f"postgres://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
-        modules={"models": ["app.models"]},
+        modules={"models": ["app.models", "aerich.models", "app.models.diaries"]},
     )
     await Tortoise.generate_schemas()  # 필요 시 DB 스키마 생성 함수
 
