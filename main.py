@@ -3,7 +3,6 @@ from contextlib import asynccontextmanager
 from app.config.database import init_db
 from fastapi import FastAPI
 
-
 from app.apis.diary_tags import router as diary_tag_router
 
 
