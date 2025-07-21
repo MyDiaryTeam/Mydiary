@@ -18,11 +18,6 @@ async def lifespan(app: FastAPI):
     print("End Lifespan")
 
 
-
-
-
-
-
 app = FastAPI(lifespan=lifespan)  # 서버의 뇌를 만드는 과정,
 # Flask API는 애플리케이션 생성;
 # Uvicorn(ASGI 서버)가 그 객체를 통해 요청을 처리.

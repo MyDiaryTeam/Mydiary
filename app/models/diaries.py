@@ -28,6 +28,7 @@ class Diary(models.Model):
         related_name="diaries",
         through="diary_tags",
     )
+
     class Meta:
         table = "diaries"
 
