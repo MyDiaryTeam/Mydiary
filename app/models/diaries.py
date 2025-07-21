@@ -31,6 +31,7 @@ class DiaryModel(models.Model):
         "models.Tag",
         related_name="diaries",
         through="diary_tags",
+        backward_key="diary_id",
     )
 
     class Meta:
