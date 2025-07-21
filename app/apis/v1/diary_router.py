@@ -2,8 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from starlette.status import HTTP_201_CREATED, HTTP_404_NOT_FOUND
 
 from app.dtos.diary_dto import DiaryCreateRequest, DiaryResponse, DiaryUpdateRequest
+from app.models.diary_tags import DiaryTagModel
 from app.models.diaries import DiaryModel
 from app.models.users import UserModel
+from app.models.tags import Tag
 from app.services.auth_service import get_current_user
 
 router = APIRouter(prefix="/diaries", tags=["diaries"])
@@ -44,16 +46,15 @@ async def get_diary(diary_id: int):
 
 @router.get("", response_model=list[DiaryResponse])  # List Update
 async def list_diaries(
-    sort: str = Query("Latest", enum=["Oldest", "Latest"]),
-    tag: str = Query(..., description="Tag Name"),
-):
+        sort: str = Query("Latest", enum=["Oldest", "Latest"]),
+        tag: str | None = Query(None, description= "Tag Name")
+    ):
     # order가 Oldest이면 오래된 순, Latest이면 최신순
     order_by_field = "-created_at" if sort == "Latest" else "created_at"
     diaries = (
         await DiaryModel.filter(diary_tags__tag__name=tag)
         .order_by(order_by_field)
-        .prefetch_related("diary_tags__tag")
-    )
+        .prefetch_related("diary_tags__tag"))
     return [DiaryResponse.model_validate(diary) for diary in diaries]
 
 
