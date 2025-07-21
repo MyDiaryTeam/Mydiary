@@ -1,5 +1,5 @@
 from app.dtos.diary_tags import DiaryTagSchemas
-from app.models.diaries import Diary
+from app.models.diaries import DiaryModel
 from app.models.tags import Tag
 
 
@@ -7,7 +7,7 @@ class DiaryTagService:
     async def add_tag_to_diary(
         self, diary_id: int, tag_id: int
     ) -> DiaryTagSchemas.MessageResponse:
-        diary = await Diary.get_or_none(id=diary_id)
+        diary = await DiaryModel.get_or_none(id=diary_id)
         tag = await Tag.get_or_none(id=tag_id)
 
         if not diary or not tag:
@@ -20,7 +20,7 @@ class DiaryTagService:
     async def remove_tag_from_diary(
         self, diary_id: int, tag_id: int
     ) -> DiaryTagSchemas.MessageResponse:
-        diary = await Diary.get_or_none(id=diary_id)
+        diary = await DiaryModel.get_or_none(id=diary_id)
         tag = await Tag.get_or_none(id=tag_id)
 
         if not diary or not tag:
@@ -33,7 +33,7 @@ class DiaryTagService:
     async def get_tags_of_diary(
         self, diary_id: int
     ) -> list[DiaryTagSchemas.TagResponse]:
-        diary = await Diary.get_or_none(id=diary_id).prefetch_related("tags")
+        diary = await DiaryModel.get_or_none(id=diary_id).prefetch_related("tags")
 
         if not diary:
             raise Exception("Diary not found")

@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, status
 from tortoise.exceptions import IntegrityError
 
 from app.dtos.tags_dto import TagCreate, TagResponse
-from app.models.tags import TagModel
+from app.models.tags import Tag
 
 # APIRouter 생성
 router = APIRouter(prefix="/tags", tags=["tags"])
@@ -21,8 +21,8 @@ router = APIRouter(prefix="/tags", tags=["tags"])
 async def create_tag(tag_data: TagCreate):
     try:
         # 새 태그 생성
-        new_tag = await TagModel.create(tag_name=tag_data.tag_name)
-        return TagResponse(id=new_tag.tag_id, tag_name=new_tag.tag_name)
+        new_tag = await Tag.create(name=tag_data.name)
+        return TagResponse(id=new_tag.id, name=new_tag.name)
 
     except IntegrityError:
         # 만약 태그가 중복된다면
@@ -40,8 +40,8 @@ async def create_tag(tag_data: TagCreate):
     description="모든 태그 목록을 조회합니다.",
 )
 async def get_tags():
-    tags = await TagModel.all()
-    return [TagResponse(id=tag.tag_id, tag_name=tag.tag_name) for tag in tags]
+    tags = await Tag.all()
+    return [TagResponse(id=tag.id, name=tag.name) for tag in tags]
 
 
 # 조회(특정 태그만)랑 삭제?
@@ -52,12 +52,12 @@ async def get_tags():
     description="ID로 특정 태그를 조회합니다.",
 )
 async def get_tag(tag_id: int):
-    tag = await TagModel.filter(tag_id=tag_id).first()
+    tag = await Tag.filter(id=tag_id).first()
     if not tag:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="태그를 찾을 수 없습니다."
         )
-    return TagResponse(id=tag.tag_id, tag_name=tag.tag_name)
+    return TagResponse(id=tag.id, name=tag.name)
 
 
 @router.delete(
@@ -67,7 +67,7 @@ async def get_tag(tag_id: int):
     description="특정 태그를 삭제합니다.",
 )
 async def delete_tag(tag_id: int):
-    tag = await TagModel.filter(tag_id=tag_id).first()
+    tag = await Tag.filter(id=tag_id).first()
     if not tag:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="태그를 찾을 수 없습니다."
