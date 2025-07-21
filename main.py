@@ -1,10 +1,11 @@
 from contextlib import asynccontextmanager
 
-from app.config.database import init_db
 from fastapi import FastAPI
 
-from app.apis.v1.user_router import router as user_router
 from app.apis.v1.diary_router import router as diary_router
+from app.apis.v1.tags_router import router as tags_router
+from app.apis.v1.user_router import router as user_router
+from app.config.database import init_db
 
 
 # @app.on_event("startup") # 오래된 방식 > New Way: lifespan
@@ -24,3 +25,4 @@ app = FastAPI(lifespan=lifespan)  # 서버의 뇌를 만드는 과정,
 
 app.include_router(user_router)
 app.include_router(diary_router)
+app.include_router(tags_router)
