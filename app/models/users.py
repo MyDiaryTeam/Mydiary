@@ -1,9 +1,9 @@
 from tortoise import fields, models
 
 
-class Users(models.Model):
+class UserModel(models.Model):
     email = fields.CharField(
-        max_length=255, description="사용자 이메일 (로그인 시 사용)"
+        max_length=255, pk=True, description="사용자 이메일 (로그인 시 사용)"
     )
     password = fields.CharField(max_length=255, description="비밀번호")
     nickname = fields.CharField(max_length=100, description="닉네임")

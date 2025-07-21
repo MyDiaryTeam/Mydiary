@@ -8,6 +8,3 @@ class User(models.Model):
 
     def __str__(self):
         return f"User(id={self.id}, name={self.name}, email={self.email})"
-
-
-__all__ = ["User"]

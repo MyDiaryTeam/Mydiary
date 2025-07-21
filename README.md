@@ -406,3 +406,97 @@ Step 1: API 스펙 설계
 Step 2: 유저 API 구현
 Step 3: 일기 API 구현
 Step 4: Test Code 작성
+
+## STEP 3: 일기 API 구현
+MDR (Model, DTO, Router)
+1. Model # Already done
+2. DTO (Pydantic)
+
+Pydantic: 직렬화/ 역질렬화를 자동화 하기 위함.
+ - Validation
+``` Valiation
+from pydantic import BaseModel
+
+class User(BaseModel):
+    name: str
+    age: int
+```
+
+ - Type Casting
+``` Type Casting
+user = User(name="Alice", age="25")
+print(user.age)  # 25 (int로 자동 변환)
+```
+
+ - Serialization / Deserialization
+```Serialization / Deserialization
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class User(BaseModel):
+    name: str
+    age: int
+
+@app.post("/users")
+def create_user(user: User):
+    return user  # JSON 자동 변환
+```
+ - IDE, Type Hinting
+ - 무결성 확보
+
+3. Router
+```angular2html
+
+```
+```including router
+
+```
+
+### Exception 1: SwaggerUI에 보이지 않음
+Code:
+Cause: Router을 새로 등록해서 서버를 재시작해야함. 8000 Port가 종료가 안됨.  
+Solution 1: 8000번 포트 종료
+Solution 2: 컴퓨터 재부팅
+
+### Exception 2: DB Connection 오류
+Code: `tortoise.exceptions.ConfigurationError: default_connection for the model <class 'app.models.diaries.DiaryModel'> cannot be None`
+Cause: User을 UserModel로 변경함. 이후, 모든 관련 스키마가 같이 바꾸지 않음.
+Solution 1: 다른 모델 및 라우터의 FK Key를 재확인
+
+### Exception 3: dto 입력 오류
+Code: ``
+Cause: Model의 스키마에서 꼭 채워야하는 값이 없을 때 오류가 생김
+Solution: 
+
+### Exception 4: 일기 생성 시 / 422 Unprocessable Entity
+Code: `POST /diaries/ HTTP/1.1" 422 Unprocessable Entity`
+Cause: 서버에서 받은 필드와 dto의 필드가 다름
+Solution 1: id는 AutoIncrement이므로 Create 기능엔 추가하지 않음
+Solution 2: user_email은 FK이므로 스트링이 아님.
+Solution 3: EnumField로 정의한 것은 class를 이용하여 따로 정의해줘야함.
+
+### Exception 5: 일기 생성 시 / 500 Internal Server Error
+Code: `"POST /diaries/ HTTP/1.1" 500 Internal Server Error`
+Cause 1: 라우터에 FK 값이 있는 콜럼, 참조 오류
+Solution 1: UserModel 불러오기, UserModel의 값을 클래스 인스턴스로 반환하여 사용
+
+Cause 2: Dict 값 참조 오류
+Solution 1: `return DiaryResponse.model_validate(diary.__dict__)`
+Solution 2: ` model_config = { "from_attributes": True, }`
+
+### Exception 6: 일기 하나 불러오기 / 존재하지 않는 필터명으로 불러오기
+Code: `Unknown filter param 'id'. Allowed base values are [...]`
+Cause: 존재하지 않는 필드가 있다는 것
+Solution: Router에서 잘 찾아보자
+
+### Exception 7: 유저 헤더에 정보 보내는 법
+Code: `POST /diaries/ HTTP/1.1" 401 Unauthorized`
+Cause: 토큰 값을 헤더로 보내지 않음.
+Solution: Pydantic Model에서 user_email 필드 삭제
+
+### Exception 8: 
+Code: `AttributeError: 'UserInDB' object has no attribute '_saved_in_db'`
+Cause: ForeignKeyField는 TortoiseORM Model만 받을 수 있음, PydanticModel을 주고 있어 에러가 남.
+Solution:  

@@ -8,7 +8,7 @@ from passlib.context import CryptContext
 
 from app.config.config import settings
 from app.dtos.user_dto import UserInDB
-from app.models.users import Users
+from app.models.users import UserModel
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -33,7 +33,9 @@ class AuthService:
         if expires_delta:
             expire = datetime.now(timezone.utc) + expires_delta
         else:
-            expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+            expire = datetime.now(timezone.utc) + timedelta(
+                minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+            )
         to_encode.update({"exp": expire})
         encoded_jwt = jwt.encode(
             to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
@@ -68,7 +70,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> UserInDB:
     if AuthService.is_token_blacklisted(token):
         raise credentials_exception
 
-    user = await Users.get_or_none(email=username)
+    user = await UserModel.get_or_none(email=username)
     if user is None:
         raise credentials_exception
 
