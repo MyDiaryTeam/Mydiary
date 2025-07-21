@@ -1,7 +1,7 @@
 from datetime import timedelta
 
-from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from starlette.status import (
     HTTP_201_CREATED,
     HTTP_401_UNAUTHORIZED,
@@ -9,7 +9,7 @@ from starlette.status import (
 )
 
 from app.config.config import settings
-from app.dtos.user_dto import UserCreate, UserResponse, Token
+from app.dtos.user_dto import Token, UserCreate, UserResponse
 from app.models.users import UserModel
 from app.services.auth_service import AuthService, get_current_user
 
