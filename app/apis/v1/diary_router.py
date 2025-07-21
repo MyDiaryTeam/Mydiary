@@ -35,7 +35,7 @@ async def create_diary(
 
 @router.get("/{diary_id}", response_model=DiaryResponse)  # GetDiary
 async def get_diary(diary_id: int):
-    diary = await DiaryModel.get_or_none(diary_id=diary_id)
+    diary = await DiaryModel.get_or_none(id=diary_id)
     if not diary:
         raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="Diary not found")
 
@@ -58,7 +58,7 @@ async def update_diary(
 ):
 
     # 1. 수정할 diary가 DB에 있는지 확인
-    diary = await DiaryModel.get_or_none(diary_id=diary_id)
+    diary = await DiaryModel.get_or_none(id=diary_id)
     if not diary:
         raise HTTPException(status_code=404, detail="Diary not found")
 

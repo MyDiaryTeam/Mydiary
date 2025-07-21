@@ -11,7 +11,7 @@ class MoodModel(str, Enum):
 
 
 class DiaryModel(models.Model):
-    diary_id = fields.IntField(pk=True, description="일기 고유 ID")
+    id = fields.IntField(pk=True, description="일기 고유 ID")
     user = fields.ForeignKeyField(
         "models.UserModel", related_name="user_diaries", on_delete=fields.CASCADE
     )
@@ -26,6 +26,13 @@ class DiaryModel(models.Model):
     mood = fields.CharEnumField(MoodModel, description="기분")
     created_at = fields.DatetimeField(auto_now_add=True, description="작성일자")
     updated_at = fields.DatetimeField(auto_now=True, description="수정일자")
+
+    tags = fields.ManyToManyField(
+        "models.Tag",
+        related_name="diaries",
+        through="diary_tags",
+        backward_key="diary_id",
+    )
 
     class Meta:
         table = "diaries"
