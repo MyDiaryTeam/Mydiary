@@ -9,7 +9,7 @@ from starlette.status import (
 )
 
 from app.config.config import settings
-from app.dtos.user_dto import Token, UserCreate, UserResponse
+from app.dtos.user_dto import Token, UserCreate, UserResponse, UserUpdate
 from app.models.users import UserModel
 from app.services.auth_service import AuthService, get_current_user
 
@@ -60,3 +60,30 @@ async def logout(token: str = Depends(oauth2_scheme)):
 @router.get("/me", response_model=UserResponse)
 async def read_users_me(current_user: UserResponse = Depends(get_current_user)):
     return current_user
+
+
+@router.patch("/me", response_model=UserResponse)
+async def update_users_me(
+    user_update: UserUpdate,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    user = await UserModel.get(id=current_user.id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    update_data = user_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(user, key, value)
+
+    await user.save()
+    return UserResponse.model_validate(user)
+
+@router.delete("/me", response_model=UserResponse)
+async def delete_users_me(current_user: UserResponse = Depends(get_current_user)):
+    user = await UserModel.get(id=current_user.id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    await user.delete()
+    return UserResponse.model_validate(user)
+
+

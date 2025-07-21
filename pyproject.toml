@@ -35,6 +35,7 @@ dev = [
     "python-jose[cryptography]",
     "pydantic-settings",
     "python-multipart",
+    "gitmoji"
 ]
 prod = [
     "aerich>=0.9.1",
