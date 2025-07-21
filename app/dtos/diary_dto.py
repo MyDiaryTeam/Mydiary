@@ -4,7 +4,6 @@ from app.models.diaries import MoodModel
 
 
 class DiaryCreateRequest(BaseModel):  # 일기 작성
-    user_email: EmailStr
     title: str
     content: str
     emotion_summary: None

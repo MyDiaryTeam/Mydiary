@@ -490,3 +490,13 @@ Solution 2: ` model_config = { "from_attributes": True, }`
 Code: `Unknown filter param 'id'. Allowed base values are [...]`
 Cause: 존재하지 않는 필드가 있다는 것
 Solution: Router에서 잘 찾아보자
+
+### Exception 7: 유저 헤더에 정보 보내는 법
+Code: `POST /diaries/ HTTP/1.1" 401 Unauthorized`
+Cause: 토큰 값을 헤더로 보내지 않음.
+Solution: Pydantic Model에서 user_email 필드 삭제
+
+### Exception 8: 
+Code: `AttributeError: 'UserInDB' object has no attribute '_saved_in_db'`
+Cause: ForeignKeyField는 TortoiseORM Model만 받을 수 있음, PydanticModel을 주고 있어 에러가 남.
+Solution:  
