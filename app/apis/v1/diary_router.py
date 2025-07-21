@@ -19,7 +19,7 @@ async def create_diary(
     user = await UserModel.get(email=current_user.email)
     # 2. User을 넣어야 하니 이에 따른 모델 생성. (모델에 맞게 생성해야함)
     diary = await DiaryModel.create(
-        user_email=user,
+        user=user,
         title=dairy_create.title,
         content=dairy_create.content,
         emotion_summary=dairy_create.emotion_summary,

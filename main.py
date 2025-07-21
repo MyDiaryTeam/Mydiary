@@ -2,13 +2,9 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-<<<<<<< HEAD
-from app.apis.user_router import router as user_router
 from app.config.database import init_db
-=======
 from app.apis.v1.user_router import router as user_router
 from app.apis.v1.diary_router import router as diary_router
->>>>>>> be898baea5e20d466409e83227b882f016c807da
 
 
 # @app.on_event("startup") # 오래된 방식 > New Way: lifespan

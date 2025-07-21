@@ -3,7 +3,7 @@ from datetime import datetime
 from app.models.diaries import MoodModel
 
 
-class DiaryCreateRequest(BaseModel):  # 일기 작성
+class DiaryCreateRequest(BaseModel):
     title: str
     content: str
     emotion_summary: None

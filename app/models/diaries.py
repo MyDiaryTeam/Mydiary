@@ -1,10 +1,6 @@
 from enum import Enum
 
 from tortoise import fields, models
-<<<<<<< HEAD
-
-=======
->>>>>>> be898baea5e20d466409e83227b882f016c807da
 
 
 class MoodModel(str, Enum):
@@ -16,9 +12,10 @@ class MoodModel(str, Enum):
 
 class DiaryModel(models.Model):
     diary_id = fields.IntField(pk=True, description="일기 고유 ID")
-    user_email = fields.ForeignKeyField(
-        "models.UserModel", related_name="diaries", description="사용자 이메일"
-    )
+    user = fields.ForeignKeyField("models.UserModel", related_name="user_diaries", on_delete=fields.CASCADE)
+    # user_email = fields.ForeignKeyField(
+    #     "models.UserModel", related_name="diaries", description="사용자 이메일"
+    # )
     title = fields.CharField(max_length=255, description="제목")
     content = fields.TextField(description="내용")
     emotion_summary = fields.JSONField(

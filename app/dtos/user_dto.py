@@ -18,6 +18,7 @@ class UserUpdate(BaseModel):
 
 
 class UserResponse(BaseModel):
+    id: int | None = Field(None, description="<UNK> <UNK> <UNK> <UNK> <UNK>")
     email: str = Field(..., max_length=255, description="사용자 이메일")
     nickname: str = Field(..., max_length=100, description="닉네임")
     name: str = Field(..., max_length=100, description="이름")

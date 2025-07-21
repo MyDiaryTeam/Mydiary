@@ -9,13 +9,8 @@ from starlette.status import (
 )
 
 from app.config.config import settings
-<<<<<<< HEAD:app/apis/user_router.py
-from app.dtos.user_dto import Token, UserCreate, UserResponse
-from app.models.users import Users
-=======
 from app.dtos.user_dto import UserCreate, UserResponse, Token
 from app.models.users import UserModel
->>>>>>> be898baea5e20d466409e83227b882f016c807da:app/apis/v1/user_router.py
 from app.services.auth_service import AuthService, get_current_user
 
 router = APIRouter(prefix="/users", tags=["users"])

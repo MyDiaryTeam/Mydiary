@@ -1,10 +1,6 @@
 from enum import Enum
 
 from tortoise import fields, models
-<<<<<<< HEAD
-
-=======
->>>>>>> be898baea5e20d466409e83227b882f016c807da
 
 
 class TimePeriodTypeModel(str, Enum):
