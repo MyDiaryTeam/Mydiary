@@ -10,7 +10,7 @@ from starlette.status import (
 
 from app.config.config import settings
 from app.dtos.user_dto import UserCreate, UserResponse, Token
-from app.models.users import Users
+from app.models.users import UserModel
 from app.services.auth_service import AuthService, get_current_user
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -21,12 +21,12 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 # 회원가입 로직
 @router.post("/signup", status_code=HTTP_201_CREATED, response_model=UserResponse)
 async def create_user(user_create: UserCreate):
-    if await Users.filter(email=user_create.email).exists():
+    if await UserModel.filter(email=user_create.email).exists():
         raise HTTPException(
             status_code=HTTP_409_CONFLICT, detail="Email already exists"
         )
     hashed_password = AuthService.get_password_hash(user_create.password)
-    user = await Users.create(
+    user = await UserModel.create(
         password=hashed_password, **user_create.model_dump(exclude={"password"})
     )
     return UserResponse.model_validate(user)
@@ -35,7 +35,7 @@ async def create_user(user_create: UserCreate):
 # 로그인 로직
 @router.post("/login", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = await Users.get_or_none(email=form_data.username)
+    user = await UserModel.get_or_none(email=form_data.username)
     if not user or not AuthService.verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,
