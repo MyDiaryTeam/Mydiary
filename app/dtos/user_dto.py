@@ -32,13 +32,6 @@ class UserResponse(BaseModel):
         "from_attributes": True,
     }
 
-class UserUpdate(BaseModel):
-    nickname: str | None = Field(None, max_length=100, description="<UNK>")
-    name: str | None = Field(None, max_length=100, description="<UNK>")
-    phone_number: str | None = Field(None, max_length=20, description="<UNK>")
-
-
-
 class Token(BaseModel):
     access_token: str
     token_type: str

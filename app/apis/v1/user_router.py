@@ -78,6 +78,7 @@ async def update_users_me(
     await user.save()
     return UserResponse.model_validate(user)
 
+
 @router.delete("/me", response_model=UserResponse)
 async def delete_users_me(current_user: UserResponse = Depends(get_current_user)):
     user = await UserModel.get(id=current_user.id)
@@ -85,5 +86,3 @@ async def delete_users_me(current_user: UserResponse = Depends(get_current_user)
         raise HTTPException(status_code=404, detail="User not found")
     await user.delete()
     return UserResponse.model_validate(user)
-
-
