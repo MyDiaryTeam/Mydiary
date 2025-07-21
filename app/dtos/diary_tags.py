@@ -4,7 +4,7 @@ from pydantic import BaseModel
 class DiaryTagSchemas:
     # 요청 바디: 태그 추가 요청
     class TagAddRequest(BaseModel):
-        tag_id: int
+        id: int
 
     # 응답 메시지
     class MessageResponse(BaseModel):

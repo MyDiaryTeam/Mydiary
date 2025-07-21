@@ -12,6 +12,7 @@ dependencies = [
     "pydantic-settings",
     "python-jose[cryptography]",
     "gitmoji>=0.1.0",
+    "tortoise-orm>=0.25.1",
 ]
 
 [dependency-groups]

@@ -302,6 +302,7 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "python-jose", extra = ["cryptography"] },
     { name = "tomlkit" },
+    { name = "tortoise-orm" },
 ]
 
 [package.dev-dependencies]
@@ -312,6 +313,7 @@ dev = [
     { name = "black" },
     { name = "fastapi" },
     { name = "flake8" },
+    { name = "gitmoji" },
     { name = "httpx" },
     { name = "isort" },
     { name = "passlib", extra = ["bcrypt"] },
@@ -348,6 +350,7 @@ requires-dist = [
     { name = "pydantic-settings" },
     { name = "python-jose", extras = ["cryptography"] },
     { name = "tomlkit", specifier = ">=0.13.3" },
+    { name = "tortoise-orm", specifier = ">=0.25.1" },
 ]
 
 [package.metadata.requires-dev]
@@ -358,6 +361,7 @@ dev = [
     { name = "black", specifier = ">=25.1.0" },
     { name = "fastapi", specifier = ">=0.116.1" },
     { name = "flake8", specifier = ">=7.3.0" },
+    { name = "gitmoji" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "isort", specifier = ">=6.0.1" },
     { name = "passlib", extras = ["bcrypt"], specifier = "==1.7.4" },
