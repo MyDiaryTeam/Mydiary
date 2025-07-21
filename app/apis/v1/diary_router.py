@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from starlette.status import HTTP_201_CREATED, HTTP_404_NOT_FOUND
 
 from app.dtos.diary_dto import DiaryCreateRequest, DiaryResponse, DiaryUpdateRequest
@@ -43,8 +43,10 @@ async def get_diary(diary_id: int):
 
 
 @router.get("", response_model=list[DiaryResponse])  # List Update
-async def list_diaries():
-    diaries = await DiaryModel.all().order_by("-created_at")
+async def list_diaries(sort: str = Query("Latest", enum=["Oldest", "Latest"])):
+    # order가 Oldest이면 오래된 순, Latest이면 최신순
+    order_by_field = "-created_at" if sort == "Latest" else "created_at"
+    diaries = await DiaryModel.all().order_by(order_by_field)
     return [DiaryResponse.model_validate(diary) for diary in diaries]
 
 
