@@ -12,7 +12,6 @@ TORTOISE_ORM = {
         "models": {
             "models": [
                 "aerich.models",
-
                 "app.models.users",
                 "app.models.diaries",
                 "app.models.diary_tags",
