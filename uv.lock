@@ -297,6 +297,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "asyncpg" },
     { name = "email-validator" },
+    { name = "gitmoji" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "python-jose", extra = ["cryptography"] },
@@ -342,6 +343,7 @@ prod = [
 requires-dist = [
     { name = "asyncpg", specifier = ">=0.30.0" },
     { name = "email-validator", specifier = ">=2.2.0" },
+    { name = "gitmoji", specifier = ">=0.1.0" },
     { name = "pydantic", specifier = ">=2.11.7" },
     { name = "pydantic-settings" },
     { name = "python-jose", extras = ["cryptography"] },
@@ -395,6 +397,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/9b/af/fbfe3c4b5a657d79e5c47a2827a362f9e1b763336a52f926126aa6dc7123/flake8-7.3.0.tar.gz", hash = "sha256:fe044858146b9fc69b551a4b490d69cf960fcb78ad1edcb84e7fbb1b4a8e3872", size = 48326, upload-time = "2025-06-20T19:31:35.838Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9f/56/13ab06b4f93ca7cac71078fbe37fcea175d3216f31f85c3168a6bbd0bb9a/flake8-7.3.0-py2.py3-none-any.whl", hash = "sha256:b9696257b9ce8beb888cdbe31cf885c90d31928fe202be0889a7cdafad32f01e", size = 57922, upload-time = "2025-06-20T19:31:34.425Z" },
+]
+
+[[package]]
+name = "gitmoji"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/be/28/286280735293886253a87d1ffdefdc9df8506582a616d0787f4910c3263b/gitmoji-0.1.0.tar.gz", hash = "sha256:605dec9ce3d7a95dd80c663df59bcd0a6f99f42a810e40a16a73fe5d05bac0e7", size = 4193, upload-time = "2021-05-02T14:32:41.172Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b6/b7/a513d945af1d8624a4ffd9d66fa69d054ba5a4fbddd7e6e38a1cd7f30f4d/gitmoji-0.1.0-py3-none-any.whl", hash = "sha256:f1e6842ccc3b6fa8cf5e2e7505db579cd97016a633dd2cbe5ac189b414df73fc", size = 4344, upload-time = "2021-05-02T14:32:39.207Z" },
 ]
 
 [[package]]

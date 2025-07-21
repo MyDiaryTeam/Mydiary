@@ -1,9 +1,11 @@
-from pydantic import BaseModel, EmailStr
 from datetime import datetime
+
+from pydantic import BaseModel
+
 from app.models.diaries import MoodModel
 
 
-class DiaryCreateRequest(BaseModel):  # 일기 작성
+class DiaryCreateRequest(BaseModel):
     title: str
     content: str
     emotion_summary: None

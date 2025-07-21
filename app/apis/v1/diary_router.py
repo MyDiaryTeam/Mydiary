@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from starlette.status import HTTP_201_CREATED, HTTP_404_NOT_FOUND
+
+from app.dtos.diary_dto import DiaryCreateRequest, DiaryResponse, DiaryUpdateRequest
 from app.models.diaries import DiaryModel
-from app.dtos.diary_dto import DiaryCreateRequest, DiaryUpdateRequest, DiaryResponse
 from app.models.users import UserModel
 from app.services.auth_service import get_current_user
 
@@ -9,7 +10,7 @@ router = APIRouter(prefix="/diaries", tags=["diaries"])
 
 
 @router.post(
-    "/", response_model=DiaryResponse, status_code=HTTP_201_CREATED
+    "", response_model=DiaryResponse, status_code=HTTP_201_CREATED
 )  # CreateDiary
 async def create_diary(
     dairy_create: DiaryCreateRequest,
@@ -19,7 +20,7 @@ async def create_diary(
     user = await UserModel.get(email=current_user.email)
     # 2. User을 넣어야 하니 이에 따른 모델 생성. (모델에 맞게 생성해야함)
     diary = await DiaryModel.create(
-        user_email=user,
+        user=user,
         title=dairy_create.title,
         content=dairy_create.content,
         emotion_summary=dairy_create.emotion_summary,
@@ -41,7 +42,7 @@ async def get_diary(diary_id: int):
     return DiaryResponse.model_validate(diary)
 
 
-@router.get("/", response_model=list[DiaryResponse])  # List Update
+@router.get("", response_model=list[DiaryResponse])  # List Update
 async def list_diaries():
     diaries = await DiaryModel.all().order_by("-created_at")
     return [DiaryResponse.model_validate(diary) for diary in diaries]
