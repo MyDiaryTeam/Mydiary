@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from starlette.status import HTTP_201_CREATED, HTTP_404_NOT_FOUND
 
 from app.dtos.diary_dto import DiaryCreateRequest, DiaryResponse, DiaryUpdateRequest
@@ -16,7 +16,7 @@ async def create_diary(
     dairy_create: DiaryCreateRequest,
     current_user: UserModel = Depends(get_current_user),  # 0. 로그인 여부 확인
 ):
-    # email을 타입을 되돌리기. (str -> email)
+    # email의 타입을 되돌리기. (str -> email)
     user = await UserModel.get(email=current_user.email)
     # 2. User을 넣어야 하니 이에 따른 모델 생성. (모델에 맞게 생성해야함)
     diary = await DiaryModel.create(
@@ -43,8 +43,17 @@ async def get_diary(diary_id: int):
 
 
 @router.get("", response_model=list[DiaryResponse])  # List Update
-async def list_diaries():
-    diaries = await DiaryModel.all().order_by("-created_at")
+async def list_diaries(
+    sort: str = Query("Latest", enum=["Oldest", "Latest"]),
+    tag: str = Query(..., description="Tag Name"),
+):
+    # order가 Oldest이면 오래된 순, Latest이면 최신순
+    order_by_field = "-created_at" if sort == "Latest" else "created_at"
+    diaries = (
+        await DiaryModel.filter(diary_tags__tag__name=tag)
+        .order_by(order_by_field)
+        .prefetch_related("diary_tags__tag")
+    )
     return [DiaryResponse.model_validate(diary) for diary in diaries]
 
 

@@ -409,9 +409,10 @@ Step 4: Test Code 작성
 
 ## STEP 3: 일기 API 구현
 MDR (Model, DTO, Router)
-1. Model # Already done
-2. DTO (Pydantic)
+### 1. Model 
+`Already done`
 
+### 2. DTO (Pydantic)
 Pydantic: 직렬화/ 역질렬화를 자동화 하기 위함.
  - Validation
 ``` Valiation
@@ -446,7 +447,7 @@ def create_user(user: User):
  - IDE, Type Hinting
  - 무결성 확보
 
-3. Router
+### 3. Router
 ```angular2html
 
 ```
@@ -496,7 +497,59 @@ Code: `POST /diaries/ HTTP/1.1" 401 Unauthorized`
 Cause: 토큰 값을 헤더로 보내지 않음.
 Solution: Pydantic Model에서 user_email 필드 삭제
 
-### Exception 8: 
+### Exception 8: 속성 에라!
 Code: `AttributeError: 'UserInDB' object has no attribute '_saved_in_db'`
 Cause: ForeignKeyField는 TortoiseORM Model만 받을 수 있음, PydanticModel을 주고 있어 에러가 남.
-Solution:  
+Solution: .email 쓰지 않기
+
+### 태그 조회 및 최신순 정렬
+Goal 1: 시간 순 정렬
+Code 1: 
+```Sorting by Time
+@router.get("", response_model=list[DiaryResponse])
+async def list_diaries(order: str = Query("desc", enum=["asc", "desc"])):
+    # order가 asc이면 오래된 순, desc이면 최신순
+    order_by_field = "-created_at" if order == "desc" else "created_at"
+    
+    diaries = await DiaryModel.all().order_by(order_by_field)
+    return [DiaryResponse.model_validate(diary) for diary in diaries]
+```
+Analyse 1:
+1. order: str = Query("desc", enum=["asc", "desc"])
+**order**는 API의 쿼리 파라미터(예: GET /diaries?order=asc)를 받는 변수입니다.
+Query("desc", enum=["asc", "desc"])는 FastAPI의 Query 객체를 사용해 파라미터를 정의한 것입니다.
+기본값(default)은 "desc"입니다. → 파라미터가 없으면 order="desc" 로 인식됩니다.
+enum=["asc", "desc"] → 파라미터 값이 "asc" 또는 "desc" 이외의 값이면 FastAPI가 422 에러(Unprocessable Entity)를 자동으로 반환합니다.
+즉, GET /diaries 또는 GET /diaries?order=desc → 최신순 정렬
+GET /diaries?order=asc → 오래된 순 정렬
+
+2. order_by_field = "-created_at" if order == "desc" else "created_at"
+삼항 연산자(파이썬의 조건 표현식)
+
+Goal 2: Tag Search
+Code 2:
+```Tag Search
+@router.get("", response_model=list[DiaryResponse])  # List Update
+async def list_diaries(
+        sort: str = Query("Latest", enum=["Oldest", "Latest"]),
+        tag: str = Query(..., description= "Tag Name")
+    ):
+    # order가 Oldest이면 오래된 순, Latest이면 최신순
+    order_by_field = "-created_at" if sort == "Latest" else "created_at"
+    diaries = (
+        await DiaryModel.filter(diary_tags__tag__name=tag)
+        .order_by(order_by_field)
+        .prefetch_related("diary_tags__tag"))
+    return [DiaryResponse.model_validate(diary) for diary in diaries]
+
+```
+Analyse 2: 
+1. 인자 값 추가: `tag: str = Query(..., description= "Tag Name")`
+2. 필터 안에 정렬로 코딩. : '교집합 X 부분집합 O'
+```
+diaries = (
+    await DiaryModel.filter(diary_tags__tag__name=tag)
+    .order_by(order_by_field)
+    .prefetch_related("diary_tags__tag"))
+```
+
