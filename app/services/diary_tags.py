@@ -4,9 +4,7 @@ from app.models.tags import Tag
 
 
 class DiaryTagService:
-    async def add_tag_to_diary(
-        self, diary_id: int, tag_id: int
-    ) -> DiaryTagSchemas.MessageResponse:
+    async def add_tag_to_diary(self, diary_id: int, tag_id: int):
         diary = await DiaryModel.get_or_none(id=diary_id)
         tag = await Tag.get_or_none(id=tag_id)
 

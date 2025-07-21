@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Body, HTTPException, Path, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Path, status
 
 from app.dtos.diary_tags import DiaryTagSchemas
 from app.services.diary_tags import DiaryTagService
@@ -12,16 +12,15 @@ service = DiaryTagService()
 @router.post(
     "/{diary_id}/tags",
     response_model=DiaryTagSchemas.MessageResponse,
-    status_code=status.HTTP_201_CREATED,
+    summary="일기 태그 추가",
+    description="특정 일기에 태그를 추가합니다.",
 )
 async def add_tag_to_diary(
     diary_id: int = Path(...),
     tag_data: DiaryTagSchemas.TagAddRequest = Body(...),
+    service: DiaryTagService = Depends(),
 ):
-    try:
-        return await service.add_tag_to_diary(diary_id, tag_data.tag_id)
-    except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return await service.add_tag_to_diary(diary_id, tag_data.id)
 
 
 @router.delete(
