@@ -10,6 +10,7 @@ from app.models.tags import TagModel
 router = APIRouter(prefix="/tags", tags=["tags"])
 
 
+# 태그 생성
 @router.post(
     "",
     response_model=TagResponse,
@@ -18,7 +19,6 @@ router = APIRouter(prefix="/tags", tags=["tags"])
     description="새로운 태그를 생성합니다.",
 )
 async def create_tag(tag_data: TagCreate):
-
     try:
         # 새 태그 생성
         new_tag = await TagModel.create(tag_name=tag_data.tag_name)
@@ -31,6 +31,7 @@ async def create_tag(tag_data: TagCreate):
         )
 
 
+# 태그 조회
 @router.get(
     "",
     response_model=List[TagResponse],
@@ -43,7 +44,7 @@ async def get_tags():
     return [TagResponse(id=tag.tag_id, tag_name=tag.tag_name) for tag in tags]
 
 
-# 조회랑 삭제?
+# 조회(특정 태그만)랑 삭제?
 @router.get(
     "/{tag_id}",
     response_model=TagResponse,
