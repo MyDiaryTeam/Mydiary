@@ -27,6 +27,12 @@ class DiaryModel(models.Model):
     created_at = fields.DatetimeField(auto_now_add=True, description="작성일자")
     updated_at = fields.DatetimeField(auto_now=True, description="수정일자")
 
+    tags = fields.ManyToManyField(
+        "models.Tag",
+        related_name="diaries",
+        through="diary_tags",
+    )
+
     class Meta:
         table = "diaries"
         app = "models"
