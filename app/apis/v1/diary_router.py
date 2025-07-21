@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from starlette.status import HTTP_201_CREATED, HTTP_404_NOT_FOUND
 
+from app.dependencies import get_current_user
 from app.dtos.diary_dto import DiaryCreateRequest, DiaryResponse, DiaryUpdateRequest
-
 from app.models.diaries import DiaryModel
 from app.models.users import UserModel
-from app.services.auth_service import get_current_user
 
 router = APIRouter(prefix="/diaries", tags=["diaries"])
 
