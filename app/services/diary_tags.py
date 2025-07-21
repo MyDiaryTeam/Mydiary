@@ -2,6 +2,7 @@ from app.dtos.diary_tags import DiaryTagSchemas
 from app.models.diaries import Diary
 from app.models.tags import Tag
 
+
 class DiaryTagService:
     async def add_tag_to_diary(
         self, diary_id: int, tag_id: int
