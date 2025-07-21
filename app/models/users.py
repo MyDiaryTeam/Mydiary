@@ -1,7 +1,6 @@
 from tortoise import fields, models
 
 
-
 class UserModel(models.Model):
     # id = fields.IntField(pk=True, auto_created=True, verbose_name="ID")
     email = fields.CharField(

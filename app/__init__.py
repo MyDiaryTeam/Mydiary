@@ -3,11 +3,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.apis.v1.diary_router import router as diary_router
+from app.apis.v1.diary_tags_router import router as diary_tags_router
 from app.apis.v1.tags_router import router as tags_router
 from app.apis.v1.user_router import router as user_router
-from app.apis.v1.diary_tags_router import router as diary_tags_router
 from app.config.database import init_db
 from app.config.tortoise_config import initialize_tortoise
+
 
 #
 # @app.on_event("startup") # 오래된 방식 > New Way: lifespan

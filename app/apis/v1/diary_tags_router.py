@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Path, Body, status, HTTPException, Depends
 from typing import List
+
+from fastapi import APIRouter, Body, HTTPException, Path, status
 
 from app.dtos.diary_tags import DiaryTagSchemas
 from app.services.diary_tags import DiaryTagService
