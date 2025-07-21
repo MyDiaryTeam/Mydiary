@@ -13,7 +13,7 @@ router = APIRouter(prefix="/diaries", tags=["diaries"])
 )  # CreateDiary
 async def create_diary(
     dairy_create: DiaryCreateRequest,
-    current_user: UserModel = Depends(get_current_user), # 0. 로그인 여부 확인
+    current_user: UserModel = Depends(get_current_user),  # 0. 로그인 여부 확인
 ):
     # email을 타입을 되돌리기. (str -> email)
     user = await UserModel.get(email=current_user.email)
@@ -49,9 +49,9 @@ async def list_diaries():
 
 @router.patch("/{diary_id}", response_model=DiaryResponse)  # Update Diary
 async def update_diary(
-        diary_id: int,
-        request: DiaryUpdateRequest,
-        current_user: UserModel = Depends(get_current_user),  # 0. 로그인 여부 확인
+    diary_id: int,
+    request: DiaryUpdateRequest,
+    current_user: UserModel = Depends(get_current_user),  # 0. 로그인 여부 확인
 ):
 
     # 1. 수정할 diary가 DB에 있는지 확인
