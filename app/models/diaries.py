@@ -12,7 +12,9 @@ class MoodModel(str, Enum):
 
 class DiaryModel(models.Model):
     diary_id = fields.IntField(pk=True, description="일기 고유 ID")
-    user = fields.ForeignKeyField("models.UserModel", related_name="user_diaries", on_delete=fields.CASCADE)
+    user = fields.ForeignKeyField("models.UserModel",
+                                  related_name="user_diaries",
+                                  on_delete=fields.CASCADE)
     # user_email = fields.ForeignKeyField(
     #     "models.UserModel", related_name="diaries", description="사용자 이메일"
     # )

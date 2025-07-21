@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from starlette.status import HTTP_201_CREATED, HTTP_404_NOT_FOUND
+
+from app.dtos.diary_dto import DiaryCreateRequest, DiaryResponse, DiaryUpdateRequest
 from app.models.diaries import DiaryModel
-from app.dtos.diary_dto import DiaryCreateRequest, DiaryUpdateRequest, DiaryResponse
 from app.models.users import UserModel
 from app.services.auth_service import get_current_user
 
@@ -9,7 +10,7 @@ router = APIRouter(prefix="/diaries", tags=["diaries"])
 
 
 @router.post(
-    "/", response_model=DiaryResponse, status_code=HTTP_201_CREATED
+    "", response_model=DiaryResponse, status_code=HTTP_201_CREATED
 )  # CreateDiary
 async def create_diary(
     dairy_create: DiaryCreateRequest,
@@ -41,7 +42,7 @@ async def get_diary(diary_id: int):
     return DiaryResponse.model_validate(diary)
 
 
-@router.get("/", response_model=list[DiaryResponse])  # List Update
+@router.get("", response_model=list[DiaryResponse])  # List Update
 async def list_diaries():
     diaries = await DiaryModel.all().order_by("-created_at")
     return [DiaryResponse.model_validate(diary) for diary in diaries]

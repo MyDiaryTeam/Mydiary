@@ -9,7 +9,7 @@ from starlette.status import (
 )
 
 from app.config.config import settings
-from app.dtos.user_dto import UserCreate, UserResponse, Token
+from app.dtos.user_dto import Token, UserCreate, UserResponse
 from app.models.users import UserModel
 from app.services.auth_service import AuthService, get_current_user
 
