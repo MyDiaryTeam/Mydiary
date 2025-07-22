@@ -2,12 +2,20 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.dependencies import get_current_user, oauth2_scheme
-from app.dtos.user_dto import Token, UserCreate, UserResponse
+from app.dtos.user_dto import Token, UserCreate, UserResponse, UserUpdate
 from app.models.users import UserModel
 from app.services import auth_service
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
+@router.get("/me", response_model=UserResponse)
+async def read_users_me(current_user: UserResponse = Depends(get_current_user)):
+    """
+    현재 로그인된 사용자 정보를 반환합니다.
+    :param current_user: get_current_user 의존성 주입을 통해 얻은 현재 사용자 정보
+    :return: 현재 사용자 정보
+    """
+    return current_user
 
 @router.post(
     "/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED
@@ -81,17 +89,6 @@ async def login_for_access_and_refresh_token(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-
-@router.get("/me", response_model=UserResponse)
-async def read_users_me(current_user: UserResponse = Depends(get_current_user)):
-    """
-    현재 로그인된 사용자 정보를 반환합니다.
-    :param current_user: get_current_user 의존성 주입을 통해 얻은 현재 사용자 정보
-    :return: 현재 사용자 정보
-    """
-    return current_user
-
-
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(response: Response, token: str = Depends(oauth2_scheme)):
     """
@@ -161,3 +158,28 @@ async def refresh_token(request: Request, response: Response):
         max_age=auth_service.REFRESH_TOKEN_EXPIRE_MINUTES * 60,
     )
     return {"access_token": new_access_token, "token_type": "bearer"}
+
+
+@router.put("/me", response_model=UserResponse)
+async def update_users_me(
+    user_update: UserUpdate, current_user: UserResponse = Depends(get_current_user)
+):
+    updated_user = await auth_service.update_user(
+        current_user.id, user_update.model_dump(exclude_unset=True)
+    )
+    if not updated_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return UserResponse.model_validate(updated_user)
+
+
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_users_me(current_user: UserResponse = Depends(get_current_user)):
+    """
+    현재 로그인된 사용자를 삭제합니다.
+    :param current_user: 현재 사용자 정보
+    """
+    deleted = await auth_service.delete_user(current_user.id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="User not found")
+    return
+
