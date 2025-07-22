@@ -86,7 +86,7 @@ async def login_for_access_and_refresh_token(
         value=refresh_token,
         httponly=True,  # JavaScript에서 접근 불가
         secure=True,  # HTTPS에서만 전송 (배포 시 필수)
-        samesite="Lax",  # CSRF 공격 방지
+        samesite="lax",  # CSRF 공격 방지
         max_age=auth_service.REFRESH_TOKEN_EXPIRE_MINUTES * 60,  # 초 단위로 설정
     )
     return {"access_token": access_token, "token_type": "bearer"}
@@ -129,7 +129,7 @@ async def refresh_token(request: Request, response: Response):
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token"
         )
 
-    email: str = payload.get("sub")
+    email: str | None = payload.get("sub")
     if email is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -157,7 +157,7 @@ async def refresh_token(request: Request, response: Response):
         value=new_refresh_token,
         httponly=True,
         secure=True,  # HTTPS only
-        samesite="Lax",
+        samesite="lax",
         max_age=auth_service.REFRESH_TOKEN_EXPIRE_MINUTES * 60,
     )
     return {"access_token": new_access_token, "token_type": "bearer"}
@@ -167,6 +167,10 @@ async def refresh_token(request: Request, response: Response):
 async def update_users_me(
     user_update: UserUpdate, current_user: UserResponse = Depends(get_current_user)
 ):
+    if current_user.id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="User ID not found"
+        )
     updated_user = await auth_service.update_user(
         current_user.id, user_update.model_dump(exclude_unset=True)
     )
@@ -181,6 +185,10 @@ async def delete_users_me(current_user: UserResponse = Depends(get_current_user)
     현재 로그인된 사용자를 삭제합니다.
     :param current_user: 현재 사용자 정보
     """
+    if current_user.id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="User ID not found"
+        )
     deleted = await auth_service.delete_user(current_user.id)
     if not deleted:
         raise HTTPException(status_code=404, detail="User not found")

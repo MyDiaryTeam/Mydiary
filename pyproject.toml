@@ -37,7 +37,8 @@ dev = [
     "pydantic-settings",
     "python-multipart",
     "gitmoji",
-    "google-generativeai>=0.7.0"
+    "google-generativeai>=0.7.0",
+    "mypy>=1.17.0",
 ]
 prod = [
     "aerich>=0.9.1",
@@ -67,3 +68,15 @@ select = ["I", "E", "F", "W"]
 
 [tool.isort]
 profile = "black"
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+explicit_package_bases = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = "app.*"
+follow_imports = "normal"

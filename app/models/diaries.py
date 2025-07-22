@@ -1,6 +1,10 @@
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from tortoise import fields, models
+
+if TYPE_CHECKING:
+    from app.models.users import UserModel
 
 
 class MoodModel(str, Enum):
@@ -18,7 +22,7 @@ class EmotionType(str, Enum):
 
 class DiaryModel(models.Model):
     id = fields.IntField(pk=True, description="일기 고유 ID")
-    user = fields.ForeignKeyField(
+    user: fields.ForeignKeyRelation["UserModel"] = fields.ForeignKeyField(
         "models.UserModel", related_name="user_diaries", on_delete=fields.CASCADE
     )
     # user_email = fields.ForeignKeyField(
@@ -26,11 +30,11 @@ class DiaryModel(models.Model):
     # )
     title = fields.CharField(max_length=255, description="제목")
     content = fields.TextField(description="내용")
-    emotion_summary = fields.JSONField(
+    emotion_summary: dict | None = fields.JSONField(
         null=True, description="감정 요약 (AI 분석 결과)"
     )
     mood = fields.CharEnumField(MoodModel, description="기분")
-    emotion = fields.CharEnumField(
+    emotion: EmotionType | None = fields.CharEnumField(
         EmotionType, null=True, description="일기 감정 (AI 분석 결과)"
     )
     created_at = fields.DatetimeField(auto_now_add=True, description="작성일자")
