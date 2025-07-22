@@ -163,7 +163,7 @@ async def refresh_token(request: Request, response: Response):
     return {"access_token": new_access_token, "token_type": "bearer"}
 
 
-@router.put("/me", response_model=UserResponse)
+@router.patch("/me", response_model=UserResponse)
 async def update_users_me(
     user_update: UserUpdate, current_user: UserResponse = Depends(get_current_user)
 ):
