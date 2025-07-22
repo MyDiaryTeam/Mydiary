@@ -5,6 +5,7 @@ from app.dependencies import get_current_user
 from app.dtos.diary_dto import DiaryCreateRequest, DiaryResponse, DiaryUpdateRequest
 from app.models.diaries import DiaryModel
 from app.models.users import UserModel
+from app.services import gemini_service
 
 router = APIRouter(prefix="/diaries", tags=["diaries"])
 
@@ -31,6 +32,27 @@ async def create_diary(
 
     # 3. 리턴 값이 딕셔너리여야 함.
     return DiaryResponse.model_validate(diary)
+
+
+@router.post("/{diary_id}/summarize")
+async def summarize_diary(
+    diary_id: int,
+    current_user: UserModel = Depends(get_current_user),
+):
+    """
+    특정 일기 내용을 Gemini API를 사용하여 2~3줄로 요약합니다.
+    :param diary_id: 요약할 일기의 ID
+    :param current_user: 현재 로그인된 사용자 정보
+    :return: 요약된 일기 내용
+    """
+    diary = await DiaryModel.get_or_none(id=diary_id, user=current_user.id)
+    # print(f"DEBUG: diary_id={diary_id}, current_user.id={current_user.id}")
+    # print(f"DEBUG: Retrieved diary: {diary}")
+    if not diary:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="Diary not found or you don't have permission to access it")
+
+    summarized_text = await gemini_service.summarize_diary_content(diary.content)
+    return {"일기 요약": summarized_text}
 
 
 @router.get("/{diary_id}", response_model=DiaryResponse)  # GetDiary
