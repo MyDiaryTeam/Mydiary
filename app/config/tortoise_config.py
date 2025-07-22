@@ -9,6 +9,7 @@ load_dotenv()
 TORTOISE_APP_MODELS = [
     "aerich.models",
     "app.models.users",
+    "app.models.token_blacklist",
     "app.models.diaries",
     "app.models.diary_tags",
     "app.models.emotion_stats",

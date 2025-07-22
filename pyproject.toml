@@ -33,7 +33,6 @@ dev = [
     "ruff>=0.0.280",
     "passlib[bcrypt]==1.7.4",
     "bcrypt==3.2.0",
-    "python-jose[cryptography]",
     "pydantic-settings",
     "python-multipart",
     "gitmoji"
@@ -47,7 +46,6 @@ prod = [
     "uvicorn>=0.35.0",
     "passlib[bcrypt]==1.7.4",
     "bcrypt==3.2.0",
-    "python-jose[cryptography]",
     "pydantic-settings",
     "python-multipart",
 ]
