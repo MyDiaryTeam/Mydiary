@@ -49,7 +49,10 @@ async def summarize_diary(
     # print(f"DEBUG: diary_id={diary_id}, current_user.id={current_user.id}")
     # print(f"DEBUG: Retrieved diary: {diary}")
     if not diary:
-        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="Diary not found or you don't have permission to access it")
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail="Diary not found or you don't have permission to access it",
+        )
 
     summarized_text = await gemini_service.summarize_diary_content(diary.content)
     return {"일기 요약": summarized_text}
