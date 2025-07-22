@@ -25,8 +25,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> UserResponse:
             detail="Invalid authentication credentials",
         )
 
-    email: str = payload.get("sub")
-    token_type: str = payload.get("type")
+    email: str | None = payload.get("sub")
+    token_type: str | None = payload.get("type")
 
     # 토큰 페이로드 유효성 검사 및 토큰 타입 확인
     if email is None or token_type != "access":

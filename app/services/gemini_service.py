@@ -1,6 +1,7 @@
 import json
 
 import google.generativeai as genai
+from google.generativeai.types import GenerateContentResponse
 
 from app.config.config import settings
 
@@ -19,8 +20,8 @@ async def summarize_diary_content(content: str) -> str:
 {content}
 
 요약:"""
-    response = model.generate_content(prompt)
-    return response.text
+    response: genai.types.GenerateContentResponse = model.generate_content(prompt)
+    return str(response.text)
 
 
 async def analyze_diary_emotion(diary_id: int, user_id: int, content: str) -> dict:
@@ -60,13 +61,13 @@ async def analyze_diary_emotion(diary_id: int, user_id: int, content: str) -> di
 
 부정적 감정 키워드만 따로 추출하고 싶으니, 부정 키워드도 꼭 포함해 주세요.
 """
-    response = model.generate_content(prompt)
+    response: GenerateContentResponse = model.generate_content(prompt)
     raw_text = response.text.strip()
     # 마크다운 코드 블록 제거
     if raw_text.startswith("```json") and raw_text.endswith("```"):
         raw_text = raw_text[len("```json\n") : -len("```")].strip()
     try:
-        return json.loads(raw_text)
+        return dict(json.loads(raw_text))
     except json.JSONDecodeError:
         # Gemini가 유효한 JSON을 반환하지 않을 경우를 대비한 처리
         print(f"Gemini API에서 유효하지 않은 JSON 응답: {response.text}")

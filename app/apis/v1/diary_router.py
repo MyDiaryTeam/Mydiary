@@ -94,7 +94,11 @@ async def analyze_diary_emotion_endpoint(
     await EmotionKeywordModel.filter(diary=diary).delete()
 
     # 새로운 감정 키워드 저장
-    overall_sentiment_scores = {"긍정": 0, "부정": 0, "중립": 0}
+    overall_sentiment_scores = {
+        EmotionType.POSITIVE: 0,
+        EmotionType.NEGATIVE: 0,
+        EmotionType.NEUTRAL: 0,
+    }
     if "keywords" in analysis_result:
         for keyword_data in analysis_result["keywords"]:
             word = keyword_data.get("word")
@@ -105,31 +109,36 @@ async def analyze_diary_emotion_endpoint(
                     await EmotionKeywordModel.create(
                         diary=diary, word=word, emotion=emotion_type
                     )
-                    overall_sentiment_scores[emotion_str] += 1
+                    overall_sentiment_scores[emotion_type] += 1
                 except ValueError:
                     print(f"Invalid emotion type received: {emotion_str}")
 
     # 전체 감정 결정 (가장 많은 키워드 감정으로)
-    overall_emotion = None
+    overall_emotion: EmotionType | None = None
     max_score = 0
     for emotion_type, score in overall_sentiment_scores.items():
         if score > max_score:
             max_score = score
-            overall_emotion = EmotionType(emotion_type)
+            overall_emotion = emotion_type
         elif score == max_score and overall_emotion is not None:
             # 동점일 경우, 부정 > 긍정 > 중립 순으로 우선순위 (선택 사항)
             if (
-                emotion_type == EmotionType.NEGATIVE.value
+                overall_emotion is not None
+                and emotion_type == EmotionType.NEGATIVE
                 and overall_emotion != EmotionType.NEGATIVE
             ):
                 overall_emotion = EmotionType.NEGATIVE
             elif (
-                emotion_type == EmotionType.POSITIVE.value
+                overall_emotion is not None
+                and emotion_type == EmotionType.POSITIVE
                 and overall_emotion == EmotionType.NEUTRAL
             ):
                 overall_emotion = EmotionType.POSITIVE
 
-    diary.emotion = overall_emotion
+    if overall_emotion is not None:
+        diary.emotion = overall_emotion
+    else:
+        diary.emotion = None
     await diary.save()
 
     # 업데이트된 일기 정보 반환 (감정 키워드 포함)

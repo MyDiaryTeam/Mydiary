@@ -61,6 +61,10 @@ jobs:
         run: |
           uv run ruff check . 
 
+      - name: run Mypy
+        run: |
+          uv run mypy .
+
       # black을 사용하여 PEP8 코드스타일을 준수했는지 체크합니다.
       - name: Run black (Code formatting)
         run: |

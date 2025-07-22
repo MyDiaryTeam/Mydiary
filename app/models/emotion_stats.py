@@ -1,6 +1,10 @@
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from tortoise import fields, models
+
+if TYPE_CHECKING:
+    from app.models.users import UserModel
 
 
 class TimePeriodTypeModel(str, Enum):
@@ -10,7 +14,7 @@ class TimePeriodTypeModel(str, Enum):
 
 
 class EmotionStatModel(models.Model):
-    user_email = fields.ForeignKeyField(
+    user_email: fields.ForeignKeyRelation["UserModel"] = fields.ForeignKeyField(
         "models.UserModel", related_name="emotion_stats"
     )
     time_period_type = fields.CharEnumField(TimePeriodTypeModel)

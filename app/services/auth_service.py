@@ -5,9 +5,9 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 
 from app.config.config import settings
-from app.dtos.user_dto import (
+from app.dtos.user_dto import (  # 사용자 DTO 임포트 (비밀번호 포함된 사용자 정보)
     UserInDB,
-)  # 사용자 DTO 임포트 (비밀번호 포함된 사용자 정보)
+)
 from app.models.token_blacklist import TokenBlacklist
 from app.models.users import UserModel  # 사용자 모델 임포트
 
@@ -28,7 +28,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     :param hashed_password: 데이터베이스에 저장된 해싱된 비밀번호
     :return: 비밀번호 일치 여부 (True/False)
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    return bool(pwd_context.verify(plain_password, hashed_password))
 
 
 def get_password_hash(password: str) -> str:
@@ -37,7 +37,7 @@ def get_password_hash(password: str) -> str:
     :param password: 해싱할 평문 비밀번호
     :return: 해싱된 비밀번호 문자열
     """
-    return pwd_context.hash(password)
+    return str(pwd_context.hash(password))
 
 
 def create_token(
@@ -76,7 +76,7 @@ def create_token(
     to_encode.update({"exp": expire, "type": token_type})
 
     # JWT 인코딩 (서명)
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = str(jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM))
     return encoded_jwt
 
 
@@ -96,11 +96,11 @@ async def authenticate_user(email: str, password: str) -> Optional[UserInDB]:
     """
     user = await get_user(email)  # 이메일로 사용자 조회
     if not user:
-        return False  # 사용자가 존재하지 않으면 인증 실패
+        return None  # 사용자가 존재하지 않으면 인증 실패
 
     # 저장된 해싱 비밀번호와 입력된 비밀번호 비교
     if not verify_password(password, user.password):
-        return False  # 비밀번호가 일치하지 않으면 인증 실패
+        return None  # 비밀번호가 일치하지 않으면 인증 실패
 
     return user  # 인증 성공 시 사용자 객체 반환
 
@@ -109,7 +109,7 @@ def decode_token(token: str) -> Optional[dict]:
 
     try:
         # JWT 디코딩 및 서명 검증
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = dict(jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM]))
         return payload
     except JWTError:
         # JWT 관련 오류 (예: 토큰 만료, 서명 불일치, 변조 등) 발생 시 None 반환
