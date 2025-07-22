@@ -106,11 +106,7 @@ async def authenticate_user(email: str, password: str) -> Optional[UserInDB]:
 
 
 def decode_token(token: str) -> Optional[dict]:
-    """
-    JWT를 디코딩하고 유효성을 검증하여 페이로드 데이터를 반환합니다.
-    :param token: 디코딩할 JWT 문자열
-    :return: 디코딩된 페이로드 딕셔너리 또는 None
-    """
+
     try:
         # JWT 디코딩 및 서명 검증
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -138,3 +134,33 @@ async def is_token_blacklisted(token: str) -> bool:
     """
     blacklisted_token = await TokenBlacklist.get_or_none(token=token)
     return blacklisted_token is not None  # 토큰이 존재하면 True, 없으면 False
+
+
+async def update_user(user_id: int, user_update_data: dict) -> Optional[UserModel]:
+    """
+    사용자 정보를 업데이트합니다.
+    :param user_id: 업데이트할 사용자의 ID
+    :param user_update_data: 업데이트할 사용자 정보 (딕셔너리)
+    :return: 업데이트된 UserModel 객체 또는 None
+    """
+    user = await UserModel.get_or_none(id=user_id)
+    if not user:
+        return None
+
+    if "password" in user_update_data and user_update_data["password"]:
+        user_update_data["password"] = get_password_hash(user_update_data["password"])
+
+    for field, value in user_update_data.items():
+        setattr(user, field, value)
+
+    await user.save()
+    return user
+
+
+async def delete_user(user_id: int) -> bool:
+
+    user = await UserModel.get_or_none(id=user_id)
+    if not user:
+        return False
+    await user.delete()
+    return True
