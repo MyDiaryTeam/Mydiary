@@ -15,6 +15,7 @@ TORTOISE_APP_MODELS = [
     "app.models.emotion_stats",
     "app.models.alert_logs",
     "app.models.tags",
+    "app.models.emotion_keywords",
 ]
 
 TORTOISE_ORM = {

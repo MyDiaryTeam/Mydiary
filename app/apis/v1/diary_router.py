@@ -2,8 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from starlette.status import HTTP_201_CREATED, HTTP_404_NOT_FOUND
 
 from app.dependencies import get_current_user
-from app.dtos.diary_dto import DiaryCreateRequest, DiaryResponse, DiaryUpdateRequest
-from app.models.diaries import DiaryModel
+from app.dtos.diary_dto import (
+    DiaryCreateRequest,
+    DiaryResponse,
+    DiaryUpdateRequest,
+)
+from app.models.diaries import DiaryModel, EmotionType
+from app.models.emotion_keywords import EmotionKeywordModel
 from app.models.users import UserModel
 from app.services import gemini_service
 
@@ -24,13 +29,13 @@ async def create_diary(
         user=user,
         title=dairy_create.title,
         content=dairy_create.content,
-        emotion_summary=dairy_create.emotion_summary,
         mood=dairy_create.mood,
     )
     print("diary is generated")
     print(type(diary))
 
     # 3. 리턴 값이 딕셔너리여야 함.
+    await diary.fetch_related("emotion_keywords")
     return DiaryResponse.model_validate(diary)
 
 
@@ -46,8 +51,8 @@ async def summarize_diary(
     :return: 요약된 일기 내용
     """
     diary = await DiaryModel.get_or_none(id=diary_id, user=current_user.id)
-    # print(f"DEBUG: diary_id={diary_id}, current_user.id={current_user.id}")
-    # print(f"DEBUG: Retrieved diary: {diary}")
+    # print(f"DEBUG: diary_id={diary_id}, current_user.id={current_user.id})
+    # print(f"DEBUG: Retrieved diary: {diary})
     if not diary:
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,
@@ -55,12 +60,87 @@ async def summarize_diary(
         )
 
     summarized_text = await gemini_service.summarize_diary_content(diary.content)
-    return {"일기 요약": summarized_text}
+
+    diary.emotion_summary = {"summary_text": summarized_text}
+    await diary.save()
+
+    return {"summary": summarized_text}
+
+
+@router.post("/{diary_id}/emotion_stats", response_model=DiaryResponse)
+async def analyze_diary_emotion_endpoint(
+    diary_id: int,
+    current_user: UserModel = Depends(get_current_user),
+):
+    """
+    일기 내용을 Gemini API로 분석하여 감정 키워드를 추출하고 저장합니다.
+    :param diary_id: 분석할 일기의 ID
+    :param current_user: 현재 로그인된 사용자 정보
+    :return: 업데이트된 일기 정보 (감정 키워드 포함)
+    """
+    diary = await DiaryModel.get_or_none(id=diary_id, user=current_user.id)
+    if not diary:
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail="Diary not found or you don't have permission to access it",
+        )
+
+    analysis_result = await gemini_service.analyze_diary_emotion(
+        diary_id=diary.id, user_id=current_user.id, content=diary.content
+    )
+    print(f"DEBUG: Gemini analysis result: {analysis_result}")
+
+    # 기존 감정 키워드 삭제
+    await EmotionKeywordModel.filter(diary=diary).delete()
+
+    # 새로운 감정 키워드 저장
+    overall_sentiment_scores = {"긍정": 0, "부정": 0, "중립": 0}
+    if "keywords" in analysis_result:
+        for keyword_data in analysis_result["keywords"]:
+            word = keyword_data.get("word")
+            emotion_str = keyword_data.get("emotion")
+            if word and emotion_str:
+                try:
+                    emotion_type = EmotionType(emotion_str)
+                    await EmotionKeywordModel.create(
+                        diary=diary, word=word, emotion=emotion_type
+                    )
+                    overall_sentiment_scores[emotion_str] += 1
+                except ValueError:
+                    print(f"Invalid emotion type received: {emotion_str}")
+
+    # 전체 감정 결정 (가장 많은 키워드 감정으로)
+    overall_emotion = None
+    max_score = 0
+    for emotion_type, score in overall_sentiment_scores.items():
+        if score > max_score:
+            max_score = score
+            overall_emotion = EmotionType(emotion_type)
+        elif score == max_score and overall_emotion is not None:
+            # 동점일 경우, 부정 > 긍정 > 중립 순으로 우선순위 (선택 사항)
+            if (
+                emotion_type == EmotionType.NEGATIVE.value
+                and overall_emotion != EmotionType.NEGATIVE
+            ):
+                overall_emotion = EmotionType.NEGATIVE
+            elif (
+                emotion_type == EmotionType.POSITIVE.value
+                and overall_emotion == EmotionType.NEUTRAL
+            ):
+                overall_emotion = EmotionType.POSITIVE
+
+    diary.emotion = overall_emotion
+    await diary.save()
+
+    # 업데이트된 일기 정보 반환 (감정 키워드 포함)
+    return await DiaryModel.get(id=diary_id).prefetch_related("emotion_keywords")
 
 
 @router.get("/{diary_id}", response_model=DiaryResponse)  # GetDiary
 async def get_diary(diary_id: int):
-    diary = await DiaryModel.get_or_none(id=diary_id)
+    diary = await DiaryModel.get_or_none(id=diary_id).prefetch_related(
+        "emotion_keywords"
+    )
     if not diary:
         raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="Diary not found")
 
@@ -76,10 +156,17 @@ async def list_diaries(
     order_by_field = "-created_at" if sort == "Latest" else "created_at"
     if tag:
         diaries = (
-            await DiaryModel.filter(tags__name=tag).order_by(order_by_field).distinct()
+            await DiaryModel.filter(tags__name=tag)
+            .order_by(order_by_field)
+            .distinct()
+            .prefetch_related("emotion_keywords")
         )
     else:
-        diaries = await DiaryModel.all().order_by(order_by_field)
+        diaries = (
+            await DiaryModel.all()
+            .order_by(order_by_field)
+            .prefetch_related("emotion_keywords")
+        )
 
     return [DiaryResponse.model_validate(diary) for diary in diaries]
 

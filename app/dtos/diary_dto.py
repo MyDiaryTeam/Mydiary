@@ -1,27 +1,37 @@
 from datetime import datetime
+from typing import List, Optional
 
 from pydantic import BaseModel
 
-from app.models.diaries import MoodModel
+from app.models.diaries import EmotionType, MoodModel
+
+
+class EmotionKeywordResponse(BaseModel):
+    word: str
+    emotion: EmotionType
+
+    model_config = {
+        "from_attributes": True,
+    }
 
 
 class DiaryCreateRequest(BaseModel):
     title: str
     content: str
-    emotion_summary: None
     mood: MoodModel
 
 
 class DiaryUpdateRequest(BaseModel):  # 일기 수정
     title: str | None = None
     content: str | None = None
-    emotion_summary: None
     mood: MoodModel
 
 
 class DiaryResponse(BaseModel):
     title: str
     content: str
+    emotion: Optional[EmotionType] = None
+    emotion_keywords: List[EmotionKeywordResponse] = []
     created_at: datetime
     updated_at: datetime
 

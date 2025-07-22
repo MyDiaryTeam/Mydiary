@@ -4,10 +4,16 @@ from tortoise import fields, models
 
 
 class MoodModel(str, Enum):
-    HAPPY = "happy"
-    SAD = "sad"
-    NEUTRAL = "neutral"
-    ANGRY = "angry"
+    HAPPY = "행복함"
+    SAD = "슬픔"
+    NEUTRAL = "SOSO"
+    ANGRY = "화남"
+
+
+class EmotionType(str, Enum):
+    POSITIVE = "긍정"
+    NEGATIVE = "부정"
+    NEUTRAL = "중립"
 
 
 class DiaryModel(models.Model):
@@ -24,6 +30,9 @@ class DiaryModel(models.Model):
         null=True, description="감정 요약 (AI 분석 결과)"
     )
     mood = fields.CharEnumField(MoodModel, description="기분")
+    emotion = fields.CharEnumField(
+        EmotionType, null=True, description="일기 감정 (AI 분석 결과)"
+    )
     created_at = fields.DatetimeField(auto_now_add=True, description="작성일자")
     updated_at = fields.DatetimeField(auto_now=True, description="수정일자")
 
