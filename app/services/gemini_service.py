@@ -23,9 +23,7 @@ async def summarize_diary_content(content: str) -> str:
     return response.text
 
 
-async def analyze_diary_emotion(diary_id: int,
-                                user_id: int,
-                                content: str) -> dict:
+async def analyze_diary_emotion(diary_id: int, user_id: int, content: str) -> dict:
     """
     Gemini API를 사용하여 일기 내용에서 감정 키워드를 추출합니다.
     :param diary_id: 일기 ID
@@ -33,9 +31,7 @@ async def analyze_diary_emotion(diary_id: int,
     :param content: 분석할 일기 내용
     :return: 감정 키워드가 포함된 JSON
     """
-    model = genai.GenerativeModel(
-        "models/gemini-2.0-flash-thinking-exp-1219"
-    )
+    model = genai.GenerativeModel("models/gemini-2.0-flash-thinking-exp-1219")
     prompt = f"""아래는 사용자가 작성한 일기 내용입니다.
 각 문장에서 나타나는 감정 키워드를 추출해주세요.
 감정 키워드는 '긍정', '부정', '중립'
