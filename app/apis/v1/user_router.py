@@ -8,6 +8,7 @@ from app.services import auth_service
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
+
 @router.get("/me", response_model=UserResponse)
 async def read_users_me(current_user: UserResponse = Depends(get_current_user)):
     """
@@ -16,6 +17,7 @@ async def read_users_me(current_user: UserResponse = Depends(get_current_user)):
     :return: 현재 사용자 정보
     """
     return current_user
+
 
 @router.post(
     "/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED
@@ -88,6 +90,7 @@ async def login_for_access_and_refresh_token(
         max_age=auth_service.REFRESH_TOKEN_EXPIRE_MINUTES * 60,  # 초 단위로 설정
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(response: Response, token: str = Depends(oauth2_scheme)):
@@ -182,4 +185,3 @@ async def delete_users_me(current_user: UserResponse = Depends(get_current_user)
     if not deleted:
         raise HTTPException(status_code=404, detail="User not found")
     return
-
