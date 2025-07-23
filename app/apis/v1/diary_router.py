@@ -62,7 +62,6 @@ async def summarize_diary(
     summarized_text = await gemini_service.summarize_diary_content(diary.content)
 
     diary.emotion_summary = {"summary_text": summarized_text}
-    await diary.save()
 
     return {"summary": summarized_text}
 
