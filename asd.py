@@ -9,3 +9,5 @@ for m in genai.list_models():
         print(
             f"Model Name: {m.name}, Supported Methods: {m.supported_generation_methods}"
         )
+
+## gemini api 사용 가능한 ver print
