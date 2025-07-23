@@ -70,7 +70,7 @@ jobs:
         run: |
           uv run black . --check
 
-      # db 연결을 테스트
+      # db 연결을 테스트ㅎ
       - name: Wait for PostgreSQL
         run: |
           until pg_isready -h localhost -p 5432 -U "${{ secrets.DB_USER }}"; do
