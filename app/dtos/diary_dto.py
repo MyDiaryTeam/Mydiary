@@ -28,6 +28,7 @@ class DiaryUpdateRequest(BaseModel):  # 일기 수정
 
 
 class DiaryResponse(BaseModel):
+    id: int
     title: str
     content: str
     emotion: Optional[EmotionType] = None
