@@ -21,3 +21,4 @@ echo "성공띠 ~"
 
 
 echo "${COLOR_GREEN}ALL tests passed successfully!${COLOR_NC}"
+
